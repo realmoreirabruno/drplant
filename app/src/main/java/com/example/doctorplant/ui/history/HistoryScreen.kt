@@ -1,6 +1,8 @@
 package com.example.doctorplant.ui.history
 
+import androidx.compose.runtime.Composable
 import androidx.navigation.NavController
 
-class HistoryScreen(navController: NavController) {
+@Composable
+fun HistoryScreen(navController: NavController) {
 }

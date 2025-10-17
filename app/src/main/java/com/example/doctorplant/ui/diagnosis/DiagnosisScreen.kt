@@ -1,6 +1,8 @@
 package com.example.doctorplant.ui.diagnosis
 
+import androidx.compose.runtime.Composable
 import androidx.navigation.NavController
 
-class DiagnosisScreen(navController: NavController) {
+@Composable
+fun DiagnosisScreen(navController: NavController) {
 }
