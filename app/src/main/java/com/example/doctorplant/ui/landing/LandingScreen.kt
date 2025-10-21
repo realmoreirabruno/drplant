@@ -15,7 +15,7 @@ import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme.typography
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -23,8 +23,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import com.example.doctorplant.R
 import com.example.doctorplant.ui.components.GenericButton
 import com.example.doctorplant.ui.components.GenericOutlinedButton
@@ -32,6 +34,7 @@ import com.example.doctorplant.ui.theme.Dimmed
 import com.example.doctorplant.ui.theme.GreenButton
 import com.example.doctorplant.ui.theme.GreenHome
 import com.example.doctorplant.ui.theme.GreenIcon
+import com.example.doctorplant.ui.theme.Typography
 
 @Composable
 fun LandingScreen(navController: NavController) {
@@ -67,14 +70,14 @@ fun LandingScreen(navController: NavController) {
 
             Text(
                 text = "Dr. Plant",
-                style = typography.titleLarge
+                style = Typography.titleLarge
             )
 
             Spacer(modifier = Modifier.height(4.dp))
 
             Text(
                 text = "AI Plant Disease Expert",
-                style = typography.bodyLarge
+                style = Typography.bodyLarge
             )
 
             Spacer(modifier = Modifier.height(20.dp))
@@ -82,7 +85,7 @@ fun LandingScreen(navController: NavController) {
             Text(
                 text = "Instantly diagnose plant disease with\n advanced AI technology. " +
                         "Keep your\n garden healthy and thriving",
-                style = typography.bodyMedium,
+                style = Typography.bodyMedium,
                 textAlign = TextAlign.Center,
                 color = Dimmed
             )
@@ -101,7 +104,7 @@ fun LandingScreen(navController: NavController) {
                     Spacer(modifier = Modifier.width(8.dp))
                     Text(
                         text = "Instant\nScan",
-                        style = typography.labelSmall,
+                        style = Typography.labelSmall,
                         color = Dimmed,
                         textAlign = TextAlign.Center
                     )
@@ -118,7 +121,7 @@ fun LandingScreen(navController: NavController) {
                     Spacer(modifier = Modifier.width(8.dp))
                     Text(
                         text = "AI\nPowered",
-                        style = typography.labelSmall,
+                        style = Typography.labelSmall,
                         color = Dimmed,
                         textAlign = TextAlign.Center
                     )
@@ -135,7 +138,7 @@ fun LandingScreen(navController: NavController) {
                     Spacer(modifier = Modifier.width(8.dp))
                     Text(
                         text = "Track\nHealth",
-                        style = typography.labelSmall,
+                        style = Typography.labelSmall,
                         color = Dimmed,
                         textAlign = TextAlign.Center
                     )
@@ -162,5 +165,13 @@ fun LandingScreen(navController: NavController) {
             )
         }
 
+    }
+}
+
+@Preview(showSystemUi = true, showBackground = true, name = "Landing Screen Preview")
+@Composable
+fun HomeScreenPreview() {
+    MaterialTheme {
+        LandingScreen(navController = rememberNavController())
     }
 }

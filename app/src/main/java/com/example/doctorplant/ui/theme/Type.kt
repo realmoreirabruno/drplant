@@ -29,7 +29,7 @@ val Typography = Typography(
         fontFamily = FontFamily.Default,
         fontWeight = FontWeight.Bold,
         color = Color.White,
-        fontSize = 42.sp,
+        fontSize = 41.sp,
         lineHeight = 28.sp,
         letterSpacing = 0.sp
     ),
