@@ -53,7 +53,6 @@ fun DiagnosisScreen(navController: NavController) {
             .padding(horizontal = 16.dp, vertical = 20.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        // Título e subtítulo
         Text(
             text = "Diagnosis Results",
             fontWeight = FontWeight.Bold,
@@ -63,7 +62,6 @@ fun DiagnosisScreen(navController: NavController) {
 
         Spacer(modifier = Modifier.height(12.dp))
 
-        // Imagem analisada
         Box(
             modifier = Modifier
                 .fillMaxWidth()
@@ -101,7 +99,6 @@ fun DiagnosisScreen(navController: NavController) {
 
         Spacer(Modifier.height(20.dp))
 
-        // Status info row
         Row(
             horizontalArrangement = Arrangement.SpaceEvenly,
             modifier = Modifier.fillMaxWidth()
@@ -113,7 +110,6 @@ fun DiagnosisScreen(navController: NavController) {
 
         Spacer(Modifier.height(20.dp))
 
-        // Card de resultado
         Card(
             shape = RoundedCornerShape(16.dp),
             colors = CardDefaults.cardColors(containerColor = Color(0xFFFFF8F8)),
@@ -150,7 +146,6 @@ fun DiagnosisScreen(navController: NavController) {
 
                 Spacer(Modifier.height(16.dp))
 
-                // Confidence level
                 Text("Confidence Level", color = Color.Gray, fontSize = 14.sp)
                 Spacer(Modifier.height(4.dp))
                 Row(verticalAlignment = Alignment.CenterVertically) {
@@ -170,7 +165,6 @@ fun DiagnosisScreen(navController: NavController) {
 
                 Spacer(Modifier.height(16.dp))
 
-                // Risk info
                 Row(
                     horizontalArrangement = Arrangement.SpaceEvenly,
                     modifier = Modifier.fillMaxWidth()
@@ -191,7 +185,6 @@ fun DiagnosisScreen(navController: NavController) {
 
                 Spacer(Modifier.height(20.dp))
 
-                // Botão "View Treatment"
                 Button(
                     onClick = { /* TODO: Navigate to treatment screen */ },
                     colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF4CAF50)),
