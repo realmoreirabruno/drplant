@@ -5,7 +5,6 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.example.doctorplant.ui.diagnosis.CameraScreen
-//import com.example.doctorplant.ui.diagnosis.CameraScreen
 import com.example.doctorplant.ui.diagnosis.DiagnosisScreen
 import com.example.doctorplant.ui.history.HistoryScreen
 import com.example.doctorplant.ui.home.HomeScreen

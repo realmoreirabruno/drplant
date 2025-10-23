@@ -19,8 +19,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ShoppingCart
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
@@ -183,27 +181,44 @@ fun DiagnosisScreen(navController: NavController) {
                     )
                 }
 
-                Spacer(Modifier.height(20.dp))
-
-                Button(
-                    onClick = { /* TODO: Navigate to treatment screen */ },
-                    colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF4CAF50)),
-                    shape = RoundedCornerShape(12.dp),
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(50.dp)
-                ) {
-                    Icon(Icons.Default.ShoppingCart, contentDescription = null, tint = Color.White)
-                    Spacer(Modifier.width(8.dp))
-                    Text(
-                        text = "Symptoms, Treatment and Prevention",
-                        color = Color.White,
-                        fontWeight = FontWeight.SemiBold,
-                        fontSize = 14.sp
-                    )
-                }
+//                Spacer(Modifier.height(20.dp))
+//
+//                Button(
+//                    onClick = { /* TODO: Navigate to treatment screen */ },
+//                    colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF4CAF50)),
+//                    shape = RoundedCornerShape(12.dp),
+//                    modifier = Modifier
+//                        .fillMaxWidth()
+//                        .height(50.dp)
+//                ) {
+//                    Icon(Icons.Default.ShoppingCart, contentDescription = null, tint = Color.White)
+//                    Spacer(Modifier.width(8.dp))
+//                    Text(
+//                        text = "Symptoms, Treatment and Prevention",
+//                        color = Color.White,
+//                        fontWeight = FontWeight.SemiBold,
+//                        fontSize = 14.sp
+//                    )
+//                }
             }
         }
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        SectionHeader(
+            icon = Icons.Default.ShoppingCart,
+            title = "Treatment Plan"
+        )
+
+        PreventionCard(
+            title = "Tool Sanitation",
+            color = Color(0xFFFFF3E0),
+            tips = listOf(
+                "Disinfect pruning tools between plants.",
+                "Use 70% alcohol or bleach solution.",
+                "Clean hands thoroughly after handling."
+            )
+        )
     }
 }
 
@@ -234,8 +249,40 @@ fun RiskInfo(title: String, value: String, color: Color, icon: ImageVector) {
     }
 }
 
+@Composable
+fun PreventionCard(title: String, color: Color, tips: List<String>) {
+    Card(
+        shape = RoundedCornerShape(16.dp),
+        colors = CardDefaults.cardColors(containerColor = color),
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 8.dp)
+    ) {
+        Column(Modifier.padding(12.dp)) {
+            Text(title, fontWeight = FontWeight.Bold, color = Color.Black)
+            Spacer(Modifier.height(4.dp))
+            tips.forEach { tip ->
+                Row(Modifier.padding(vertical = 2.dp)) {
+                    Text("• ", fontWeight = FontWeight.Bold, color = Color.Black)
+                    Text(tip, fontSize = 13.sp, color = Color.Black)
+                }
+            }
+        }
+    }
+}
 
-@Preview(showBackground = true, backgroundColor = 0xFFFFFFFF)
+@Composable
+fun SectionHeader(icon: ImageVector, title: String) {
+    Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.padding(bottom = 4.dp)) {
+        Icon(icon, contentDescription = null, tint = Color(0xFF000000))
+        Spacer(Modifier.width(8.dp))
+        Text(title, fontWeight = FontWeight.Bold, fontSize = 18.sp, color = Color.Black)
+    }
+}
+
+
+
+@Preview(showBackground = true, backgroundColor = 0xFFFFFFFF, heightDp = 1200)
 @Composable
 fun DiagnosisScreenPreview() {
     DiagnosisScreen(navController = rememberNavController())

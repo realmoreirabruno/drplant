@@ -174,8 +174,8 @@ fun HistoryCard(item: HistoryItem) {
         elevation = CardDefaults.cardElevation(2.dp),
         modifier = Modifier.fillMaxWidth()
     ) {
-        Row (verticalAlignment = Alignment.CenterVertically) {
-            Spacer(modifier = Modifier.width(16.dp))
+        Row (verticalAlignment = Alignment.CenterVertically, modifier = Modifier.padding(8.dp)) {
+            Spacer(modifier = Modifier.width(8.dp))
             Image(
                 painter = painterResource(id = item.imageRes),
                 contentDescription = null,
@@ -211,7 +211,6 @@ fun HistoryCard(item: HistoryItem) {
 
                 Spacer(Modifier.height(8.dp))
 
-                // Disease Info Box
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -224,11 +223,13 @@ fun HistoryCard(item: HistoryItem) {
                             fontSize = 14.sp,
                             fontWeight = FontWeight.Bold
                         )
+                        Spacer(modifier = Modifier.height(6.dp))
                         Text(
                             "Confidence: ${item.confidence}%",
                             color = Color.Gray,
                             fontSize = 14.sp
                         )
+                        Spacer(modifier = Modifier.height(6.dp))
                         Text(
                             item.advice,
                             color = dotColor,

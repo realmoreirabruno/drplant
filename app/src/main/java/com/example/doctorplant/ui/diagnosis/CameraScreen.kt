@@ -1,10 +1,8 @@
 package com.example.doctorplant.ui.diagnosis
 
 import android.net.Uri
-import android.os.Build
 import android.os.Environment
 import android.util.Log
-import androidx.annotation.RequiresApi
 import androidx.camera.core.CameraSelector
 import androidx.camera.core.ImageCapture
 import androidx.camera.core.ImageCaptureException

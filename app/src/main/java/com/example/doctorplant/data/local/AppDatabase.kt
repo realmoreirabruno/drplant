@@ -4,7 +4,7 @@ import androidx.room.Database
 import androidx.room.RoomDatabase
 import com.example.doctorplant.data.model.DiagnosisHistory
 
-@Database(entities = [DiagnosisHistory::class], version = 1)
+@Database(entities = [DiagnosisHistory::class], version = 1, exportSchema = false)
 abstract class AppDatabase : RoomDatabase() {
     abstract fun diagnosisDao(): DiagnosisDao
 }
