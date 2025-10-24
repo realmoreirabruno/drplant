@@ -28,20 +28,16 @@ android {
             )
         }
     }
-    compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_11
-        targetCompatibility = JavaVersion.VERSION_11
-    }
-    kotlinOptions {
-        jvmTarget = "11"
-    }
     buildFeatures {
         compose = true
     }
 }
 
-dependencies {
+kotlin {
+    jvmToolchain(17)
+}
 
+dependencies {
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)
@@ -50,36 +46,37 @@ dependencies {
     implementation(libs.androidx.compose.ui.graphics)
     implementation(libs.androidx.compose.ui.tooling.preview)
     implementation(libs.androidx.compose.material3)
+    implementation(libs.androidx.compose.material.icons.extended.android)
 
     // Navigation Compose
-    implementation("androidx.navigation:navigation-compose:2.9.5")
-
-    // Lifecycle e ViewModel
-    implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.8.4")
-    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.9.4")
+    implementation(libs.navigation.compose)
 
     //Retrofit + Gson
-    implementation("com.squareup.retrofit2:retrofit:3.0.0")
-    implementation("com.squareup.retrofit2:converter-gson:3.0.0")
+    implementation(libs.retrofit)
+    implementation(libs.retrofit.converter.gson)
+
     // OkHttp
-    implementation("com.squareup.okhttp3:okhttp:5.2.1")
-    implementation ("com.squareup.okhttp3:logging-interceptor:5.2.1")
+    implementation(libs.okhttp)
+    implementation (libs.logging.interceptor)
 
     // Room
-    implementation ("androidx.room:room-runtime:2.8.2")
+    implementation (libs.androidx.room.runtime)
+    implementation (libs.androidx.room.ktx)
+    ksp (libs.androidx.room.compiler)
+
+    // CameraX core libraries
     implementation(libs.androidx.camera.view)
     implementation(libs.androidx.camera.lifecycle)
-    ksp ("androidx.room:room-compiler:2.8.2")
-    implementation ("androidx.room:room-ktx:2.8.2")
+    implementation(libs.androidx.camera.core)
+    implementation(libs.androidx.camera.camera2)
+    implementation(libs.androidx.camera.extensions)
 
     // Coil (para carregar imagens)
-    implementation ("io.coil-kt:coil-compose:2.7.0")
+    implementation (libs.coil.compose)
 
     // Koin for Android
-    implementation(platform("io.insert-koin:koin-bom:4.1.1"))
-    implementation ("io.insert-koin:koin-core")
-    implementation ("io.insert-koin:koin-android")
-    implementation ("io.insert-koin:koin-androidx-compose")
+    implementation (libs.koin.android)
+    implementation(libs.koin.androidx.navigation)
 
     //Testing
     testImplementation(libs.junit)

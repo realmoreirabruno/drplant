@@ -159,7 +159,7 @@ fun LandingScreen(navController: NavController) {
 
             GenericOutlinedButton(
                 text = "Learn more",
-                onClick = {},
+                onClick = { navController.navigate("learn_more") },
                 buttonLarge = true,
                 modifier = Modifier.fillMaxWidth()
             )

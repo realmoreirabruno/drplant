@@ -1,6 +1,7 @@
 package com.example.doctorplant.ui
 
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -9,20 +10,22 @@ import com.example.doctorplant.ui.diagnosis.DiagnosisScreen
 import com.example.doctorplant.ui.history.HistoryScreen
 import com.example.doctorplant.ui.home.HomeScreen
 import com.example.doctorplant.ui.landing.LandingScreen
+import com.example.doctorplant.ui.learnmore.LearnMoreScreen
 import com.example.doctorplant.ui.login.LoginScreen
 import com.example.doctorplant.ui.register.RegisterScreen
-import com.example.doctorplant.ui.treatment.TreatmentScreen
 
 @Composable
-fun AppNavGraph(navController: NavHostController) {
+fun AppNavGraph(navController: NavHostController, modifier: Modifier = Modifier) {
     NavHost(
         navController = navController,
-        startDestination = "landing"
+        startDestination = "home",
+        modifier = modifier
     ) {
         composable("landing") { LandingScreen(navController) }
         composable("login") { LoginScreen(navController) }
         composable("register") { RegisterScreen(navController) }
         composable("home") { HomeScreen(navController) }
+        composable("learn_more") { LearnMoreScreen() }
         composable("camera") {
             CameraScreen(
                 navController,
@@ -30,7 +33,6 @@ fun AppNavGraph(navController: NavHostController) {
             )
         }
         composable("diagnosis") { DiagnosisScreen(navController) }
-        composable("treatment") { TreatmentScreen(navController) }
         composable("history") { HistoryScreen(navController) }
     }
 }

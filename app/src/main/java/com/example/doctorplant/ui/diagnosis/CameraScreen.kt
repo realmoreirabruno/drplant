@@ -1,8 +1,13 @@
 package com.example.doctorplant.ui.diagnosis
 
+import android.content.Context
+import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Environment
 import android.util.Log
+import android.widget.Toast
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.camera.core.CameraSelector
 import androidx.camera.core.ImageCapture
 import androidx.camera.core.ImageCaptureException
@@ -18,14 +23,13 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ShoppingCart
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -34,13 +38,17 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
+import com.example.doctorplant.R
 import java.io.File
+import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 
 @Composable
@@ -50,15 +58,59 @@ fun CameraScreen(
 ) {
     val context = LocalContext.current
     val lifecycleOwner = LocalLifecycleOwner.current
-    var imageUri by remember { mutableStateOf<Uri?>(null) }
     val cameraExecutor = remember { Executors.newSingleThreadExecutor() }
 
+    var hasCameraPermission by remember {
+        mutableStateOf(
+            ContextCompat.checkSelfPermission(context, android.Manifest.permission.CAMERA) ==
+                    PackageManager.PERMISSION_GRANTED
+        )
+    }
+
+    val permissionLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.RequestPermission(),
+        onResult = { granted ->
+            hasCameraPermission = granted
+        }
+    )
+
+    LaunchedEffect(Unit) {
+        if (!hasCameraPermission) {
+            permissionLauncher.launch(android.Manifest.permission.CAMERA)
+        }
+    }
+
+    if (!hasCameraPermission) {
+        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+            Text("Permissão da câmera é necessária para continuar.")
+        }
+        return
+    }
+
+    CameraContent(
+        context = context,
+        navController = navController,
+        onPhotoCaptured = onPhotoCaptured,
+        cameraExecutor = cameraExecutor,
+        lifecycleOwner = lifecycleOwner
+    )
+}
+
+@Composable
+private fun CameraContent(
+    context: Context,
+    navController: NavController,
+    onPhotoCaptured: (Uri) -> Unit,
+    cameraExecutor: ExecutorService,
+    lifecycleOwner: LifecycleOwner
+) {
     val outputDirectory = remember {
         context.getExternalFilesDir(Environment.DIRECTORY_PICTURES)
             ?: context.filesDir
     }
 
-    var imageCapture: ImageCapture? = remember { null }
+    var imageUri by remember { mutableStateOf<Uri?>(null) }
+    var imageCapture by remember { mutableStateOf<ImageCapture?>(null) }
 
     Box(modifier = Modifier.fillMaxSize()) {
         AndroidView(
@@ -72,12 +124,17 @@ fun CameraScreen(
                     val preview = Preview.Builder().build().apply {
                         surfaceProvider = previewView.surfaceProvider
                     }
-                    imageCapture = ImageCapture.Builder().build()
+
+                    val capture = ImageCapture.Builder()
+                        .setCaptureMode(ImageCapture.CAPTURE_MODE_MINIMIZE_LATENCY)
+                        .build()
+                    imageCapture = capture
+
                     val cameraSelector = CameraSelector.DEFAULT_BACK_CAMERA
 
                     cameraProvider.unbindAll()
                     cameraProvider.bindToLifecycle(
-                        lifecycleOwner, cameraSelector, preview, imageCapture
+                        lifecycleOwner, cameraSelector, preview, capture
                     )
                 }, ContextCompat.getMainExecutor(ctx))
 
@@ -91,22 +148,28 @@ fun CameraScreen(
                     outputDirectory,
                     "${System.currentTimeMillis()}.jpg"
                 )
+
                 val outputOptions = ImageCapture.OutputFileOptions.Builder(photoFile).build()
+                val capture = imageCapture
 
-                imageCapture?.takePicture(
-                    outputOptions,
-                    ContextCompat.getMainExecutor(context),
-                    object : ImageCapture.OnImageSavedCallback {
-                        override fun onError(exc: ImageCaptureException) {
-                            Log.e("CameraCapture", "Erro: ${exc.message}", exc)
-                        }
+                if (capture != null) {
+                    capture.takePicture(
+                        outputOptions,
+                        ContextCompat.getMainExecutor(context),
+                        object : ImageCapture.OnImageSavedCallback {
+                            override fun onError(exc: ImageCaptureException) {
+                                Log.e("CameraCapture", "Erro ao capturar: ${exc.message}", exc)
+                            }
 
-                        override fun onImageSaved(output: ImageCapture.OutputFileResults) {
-                            val uri = Uri.fromFile(photoFile)
-                            imageUri = uri
+                            override fun onImageSaved(output: ImageCapture.OutputFileResults) {
+                                val uri = Uri.fromFile(photoFile)
+                                imageUri = uri
+                            }
                         }
-                    }
-                )
+                    )
+                } else {
+                    Toast.makeText(context, "Câmera ainda não inicializada", Toast.LENGTH_SHORT).show()
+                }
             },
             modifier = Modifier
                 .align(Alignment.BottomCenter)
@@ -114,9 +177,10 @@ fun CameraScreen(
                 .size(72.dp)
                 .background(Color.White, CircleShape)
         ) {
-            Icon(Icons.Default.ShoppingCart, contentDescription = "Capturar foto")
+            Icon(painterResource(R.drawable.ic_camera), contentDescription = "Capturar foto")
         }
 
+        // Preview da imagem tirada
         imageUri?.let { uri ->
             Box(
                 modifier = Modifier
@@ -153,3 +217,4 @@ fun CameraScreen(
         }
     }
 }
+

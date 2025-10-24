@@ -6,8 +6,6 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.navigation.compose.rememberNavController
-import com.example.doctorplant.ui.AppNavGraph
 import com.example.doctorplant.ui.theme.DoctorPlantTheme
 
 class MainActivity : ComponentActivity() {
@@ -16,8 +14,7 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             DoctorPlantTheme {
-                val navController = rememberNavController()
-                AppNavGraph(navController)
+                MainScreen()
             }
         }
     }
@@ -27,6 +24,6 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun GreetingPreview() {
     DoctorPlantTheme {
-
+        MainScreen()
     }
 }

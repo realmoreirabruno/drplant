@@ -37,7 +37,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -93,26 +92,23 @@ fun HistoryScreen(navController: NavController) {
             .background(Color(0xFFF8F9FA))
             .verticalScroll(rememberScrollState())
     ) {
+//        OutlinedTextField(
+//            value = "",
+//            onValueChange = {},
+//            modifier = Modifier
+//                .padding(horizontal = 16.dp, vertical = 8.dp)
+//                .fillMaxWidth(),
+//            placeholder = { Text("Search your plant diagnoses...") },
+//            leadingIcon = {
+//                Icon(Icons.Default.Search, contentDescription = null, tint = Color.Gray)
+//            },
+//            shape = RoundedCornerShape(12.dp),
+//            colors = TextFieldDefaults.colors(
+//                focusedContainerColor = Color(0xFF2E7D32),
+//                unfocusedContainerColor = Color(0xFFE0E0E0)
+//            )
+//        )
 
-        // Search Bar
-        OutlinedTextField(
-            value = "",
-            onValueChange = {},
-            modifier = Modifier
-                .padding(horizontal = 16.dp, vertical = 8.dp)
-                .fillMaxWidth(),
-            placeholder = { Text("Search your plant diagnoses...") },
-            leadingIcon = {
-                Icon(Icons.Default.Search, contentDescription = null, tint = Color.Gray)
-            },
-            shape = RoundedCornerShape(12.dp),
-            colors = TextFieldDefaults.colors(
-                focusedContainerColor = Color(0xFF2E7D32),
-                unfocusedContainerColor = Color(0xFFE0E0E0)
-            )
-        )
-
-        // Filter Buttons
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -124,7 +120,6 @@ fun HistoryScreen(navController: NavController) {
             FilterButton("This Week", false)
         }
 
-        // Stats
         Box(
             modifier = Modifier
                 .fillMaxWidth()
@@ -146,10 +141,10 @@ fun HistoryScreen(navController: NavController) {
             "Recent Activity",
             modifier = Modifier.padding(start = 16.dp, bottom = 8.dp),
             fontWeight = FontWeight.Bold,
+            color = Color.Black,
             fontSize = 18.sp
         )
 
-        // History List
         Column(Modifier.padding(horizontal = 16.dp, vertical = 4.dp)) {
             historyItems.forEach { item ->
                 HistoryCard(item)
@@ -177,11 +172,11 @@ fun HistoryCard(item: HistoryItem) {
         Row (verticalAlignment = Alignment.CenterVertically, modifier = Modifier.padding(8.dp)) {
             Spacer(modifier = Modifier.width(8.dp))
             Image(
-                painter = painterResource(id = item.imageRes),
+                painter = painterResource(R.drawable.imagemsoja),
                 contentDescription = null,
                 modifier = Modifier
-                    .size(width = 80.dp, height = 120.dp)
-                    .clip(RoundedCornerShape(8.dp))
+                    .size(width = 80.dp, height = 140.dp)
+                    .clip(RoundedCornerShape(16.dp))
             )
             Column(Modifier.padding(12.dp)) {
                 Row(
@@ -194,7 +189,8 @@ fun HistoryCard(item: HistoryItem) {
                         Text(
                             text =item.plantName,
                             fontSize = 16.sp,
-                            fontWeight = FontWeight.Bold
+                            fontWeight = FontWeight.Bold,
+                            color = Color.Black
                         )
                     }
 
@@ -217,19 +213,20 @@ fun HistoryCard(item: HistoryItem) {
                         .background(item.color, RoundedCornerShape(12.dp))
                         .padding(12.dp)
                 ) {
-                    Column {
+                    Column(
+                        verticalArrangement = Arrangement.spacedBy(4.dp)
+                    ){
                         Text(
                             text = item.disease,
                             fontSize = 14.sp,
-                            fontWeight = FontWeight.Bold
+                            fontWeight = FontWeight.Bold,
+                            color = Color.Black
                         )
-                        Spacer(modifier = Modifier.height(6.dp))
                         Text(
                             "Confidence: ${item.confidence}%",
                             color = Color.Gray,
                             fontSize = 14.sp
                         )
-                        Spacer(modifier = Modifier.height(6.dp))
                         Text(
                             item.advice,
                             color = dotColor,
@@ -239,15 +236,6 @@ fun HistoryCard(item: HistoryItem) {
                 }
             }
         }
-    }
-}
-
-@Composable
-fun IconTextButton(icon: ImageVector, text: String) {
-    Row(verticalAlignment = Alignment.CenterVertically) {
-        Icon(icon, null, tint = Color(0xFF2E7D32), modifier = Modifier.size(16.dp))
-        Spacer(Modifier.width(4.dp))
-        Text(text, color = Color(0xFF2E7D32), fontSize = 13.sp)
     }
 }
 
@@ -286,7 +274,7 @@ fun StatItem(value: String, label: String, color: Color) {
     }
 }
 
-@Preview(showBackground = true, backgroundColor = 0xFFFFFFFF)
+@Preview(showBackground = true)
 @Composable
 fun HistoryScreenPreview() {
     HistoryScreen(navController = rememberNavController())

@@ -18,61 +18,81 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ShoppingCart
+import androidx.compose.material.icons.filled.Info
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.LinearProgressIndicator
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.ProgressIndicatorDefaults
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import com.example.doctorplant.R
+import com.example.doctorplant.ui.theme.Black600
+import com.example.doctorplant.ui.theme.DoctorPlantTheme
 
 @Composable
 fun DiagnosisScreen(navController: NavController) {
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color.White)
             .verticalScroll(rememberScrollState())
-            .padding(horizontal = 16.dp, vertical = 20.dp),
-        horizontalAlignment = Alignment.CenterHorizontally
+            .padding(16.dp)
     ) {
-        Text(
-            text = "Diagnosis Results",
-            fontWeight = FontWeight.Bold,
-            fontSize = 22.sp,
-            color = Color.Black
+        var name by remember { mutableStateOf("") }
+
+        OutlinedTextField(
+            value = name,
+            onValueChange = { name = it },
+            label = {
+                Text(
+                    text = "Diagnosis name...",
+                    color = Black600
+                ) },
+            singleLine = true,
+            shape = RoundedCornerShape(8.dp),
+            modifier = Modifier
+                .width(250.dp)
+                .padding(horizontal = 12.dp)
+                .align(Alignment.CenterHorizontally)
         )
+
 
         Spacer(modifier = Modifier.height(12.dp))
 
         Box(
             modifier = Modifier
-                .fillMaxWidth()
+                .width(300.dp)
+                .align(Alignment.CenterHorizontally)
                 .clip(RoundedCornerShape(16.dp))
                 .background(Color(0xFFE0E0E0))
         ) {
             Image(
-                painter = painterResource(android.R.drawable.ic_menu_gallery),
+                painter = painterResource(R.drawable.imagemsoja),
                 contentDescription = "Analyzed Image",
                 contentScale = ContentScale.Crop,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(340.dp)
+                    .height(420.dp)
                     .clip(RoundedCornerShape(16.dp))
             )
             Text(
@@ -84,15 +104,6 @@ fun DiagnosisScreen(navController: NavController) {
                     .background(Color(0xAA000000))
                     .padding(horizontal = 12.dp, vertical = 6.dp)
             )
-            IconButton(
-                onClick = { /* Zoom */ },
-                modifier = Modifier
-                    .align(Alignment.TopEnd)
-                    .padding(8.dp)
-                    .background(Color.White, shape = CircleShape)
-            ) {
-                Icon(Icons.Default.ShoppingCart, contentDescription = "Zoom", tint = Color(0xFF2E7D32))
-            }
         }
 
         Spacer(Modifier.height(20.dp))
@@ -102,188 +113,183 @@ fun DiagnosisScreen(navController: NavController) {
             modifier = Modifier.fillMaxWidth()
         ) {
             StatusChip("Identified", Color(0xFF4CAF50))
-            StatusChip("99.2% Match", Color(0xFF2196F3))
             StatusChip("2.3s Scan", Color(0xFF9C27B0))
         }
 
-        Spacer(Modifier.height(20.dp))
+        Spacer(Modifier.height(16.dp))
 
-        Card(
-            shape = RoundedCornerShape(16.dp),
-            colors = CardDefaults.cardColors(containerColor = Color(0xFFFFF8F8)),
-            elevation = CardDefaults.cardElevation(4.dp),
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            Column(Modifier.padding(16.dp)) {
-
-                // Header
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    Icon(
-                        painter = painterResource(android.R.drawable.presence_busy),
-                        contentDescription = null,
-                        tint = Color(0xFFD32F2F),
-                        modifier = Modifier.size(24.dp)
+        Column(modifier = Modifier.padding(8.dp)) {
+            Row {
+                Column {
+                    Text(
+                        text = "Leaf Spot",
+                        color = Color.Black,
+                        style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold)
                     )
-                    Spacer(Modifier.width(8.dp))
-                    Column(Modifier.weight(1f)) {
-                        Text("Bacterial Leaf Spot", fontWeight = FontWeight.Bold, fontSize = 18.sp)
+
+                    Text(
+                        text = "Xanthomonas campestris",
+                        color = Color(0xFF757575),
+                        style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold)
+                    )
+                }
+
+                Spacer(Modifier.weight(1f))
+
+                Box(modifier = Modifier.padding(top = 8.dp)) {
+                    StatusChip(
+                        label = "High Severity",
+                        Color(0xFFD32F2F),
+                        horizontalPadding = 10.dp,
+                        verticalPadding = 4.dp,
+                        roundedLevel = 20.dp
+                    )
+                }
+            }
+
+            Spacer(Modifier.height(8.dp))
+
+//            Row(
+//                verticalAlignment = Alignment.CenterVertically,
+//                horizontalArrangement = Arrangement.spacedBy(8.dp)
+//            ) {
+//                AssistChip(
+//                    onClick = {},
+//                    label = { Text("Low Severity") },
+//                    leadingIcon = {
+//                        Icon(
+//                            imageVector = Icons.Default.CheckCircle,
+//                            contentDescription = null,
+//                            tint = Color(0xFF4CAF50)
+//                        )
+//                    }
+//                )
+//            }
+
+            Text("Confidence Level", color = Color.Gray, fontSize = 14.sp)
+            Spacer(Modifier.height(4.dp))
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Text("99.2%", color = Color(0xFF2E7D32), fontWeight = FontWeight.Bold)
+                Spacer(Modifier.width(8.dp))
+                LinearProgressIndicator(
+                    progress = { 0.992f },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(8.dp)
+                        .clip(RoundedCornerShape(4.dp)),
+                    color = Color(0xFF4CAF50),
+                    trackColor = Color(0xFFE0E0E0),
+                    strokeCap = ProgressIndicatorDefaults.LinearStrokeCap,
+                )
+            }
+
+            Spacer(Modifier.height(16.dp))
+
+            Card(
+                shape = RoundedCornerShape(16.dp),
+                colors = CardDefaults.cardColors(containerColor = Color(0xFFE0E0E0)),
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Column(modifier = Modifier.padding(all = 12.dp)) {
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Icon(
+                            imageVector = Icons.Default.Info,
+                            contentDescription = null,
+                            tint = Color(0xFF4CAF50)
+                        )
+                        Spacer(Modifier.width(6.dp))
                         Text(
-                            "Xanthomonas campestris",
-                            color = Color.Gray,
-                            fontSize = 14.sp
+                            text = "Description",
+                            style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.SemiBold)
                         )
                     }
-                    Box(
-                        modifier = Modifier
-                            .background(Color(0xFFFFCDD2), RoundedCornerShape(20.dp))
-                            .padding(horizontal = 12.dp, vertical = 4.dp)
-                    ) {
-                        Text("High Severity", color = Color(0xFFD32F2F), fontSize = 12.sp, fontWeight = FontWeight.SemiBold)
+
+                    Spacer(Modifier.height(8.dp))
+                    Text(
+                        text = "A fungal or bacterial infection causing circular spots on leaves, ranging from brown to black. While usually not fatal, it can weaken plants and reduce their aesthetic appeal.",
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = Color.DarkGray
+                    )
+
+                    Spacer(Modifier.height(16.dp))
+
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Icon(
+                            painter = painterResource(R.drawable.ic_treatment),
+                            contentDescription = null,
+                            tint = Color(0xFF4CAF50)
+                        )
+                        Spacer(Modifier.width(6.dp))
+                        Text(
+                            text = "Recommended Treatment",
+                            style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.SemiBold)
+                        )
+                    }
+
+                    Spacer(Modifier.height(8.dp))
+
+                    val treatments = listOf(
+                        "Prune affected leaves and dispose of properly",
+                        "Avoid overhead watering to reduce moisture on leaves",
+                        "Apply organic copper fungicide as a preventive measure",
+                        "Ensure plants have adequate spacing for airflow",
+                        "Clean up fallen leaves and debris regularly"
+                    )
+
+                    treatments.forEachIndexed { index, treatment ->
+                        Row(
+                            verticalAlignment = Alignment.Top,
+                            modifier = Modifier.padding(vertical = 4.dp)
+                        ) {
+                            Surface(
+                                color = Color(0xFF4CAF50).copy(alpha = 0.1f),
+                                shape = CircleShape,
+                                modifier = Modifier.size(28.dp)
+                            ) {
+                                Box(contentAlignment = Alignment.Center) {
+                                    Text(
+                                        text = (index + 1).toString(),
+                                        color = Color(0xFF4CAF50),
+                                        style = MaterialTheme.typography.bodyMedium,
+                                        fontWeight = FontWeight.Bold
+                                    )
+                                }
+                            }
+                            Spacer(Modifier.width(12.dp))
+                            Text(
+                                text = treatment,
+                                style = MaterialTheme.typography.bodyMedium,
+                                color = Color.DarkGray
+                            )
+                        }
                     }
                 }
-
-                Spacer(Modifier.height(16.dp))
-
-                Text("Confidence Level", color = Color.Gray, fontSize = 14.sp)
-                Spacer(Modifier.height(4.dp))
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    Text("99.2%", color = Color(0xFF2E7D32), fontWeight = FontWeight.Bold)
-                    Spacer(Modifier.width(8.dp))
-                    LinearProgressIndicator(
-                        progress = { 0.992f },
-                        modifier = Modifier
-                                    .fillMaxWidth()
-                                    .height(8.dp)
-                                    .clip(RoundedCornerShape(4.dp)),
-                        color = Color(0xFF4CAF50),
-                        trackColor = Color(0xFFE0E0E0),
-                        strokeCap = ProgressIndicatorDefaults.LinearStrokeCap,
-                    )
-                }
-
-                Spacer(Modifier.height(16.dp))
-
-                Row(
-                    horizontalArrangement = Arrangement.SpaceEvenly,
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    RiskInfo(
-                        title = "Spread Risk",
-                        value = "High",
-                        color = Color(0xFFFF5722),
-                        icon = Icons.Default.ShoppingCart
-                    )
-                    RiskInfo(
-                        title = "Plant Health",
-                        value = "Critical",
-                        color = Color(0xFFD32F2F),
-                        icon = Icons.Default.ShoppingCart
-                    )
-                }
-
-//                Spacer(Modifier.height(20.dp))
-//
-//                Button(
-//                    onClick = { /* TODO: Navigate to treatment screen */ },
-//                    colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF4CAF50)),
-//                    shape = RoundedCornerShape(12.dp),
-//                    modifier = Modifier
-//                        .fillMaxWidth()
-//                        .height(50.dp)
-//                ) {
-//                    Icon(Icons.Default.ShoppingCart, contentDescription = null, tint = Color.White)
-//                    Spacer(Modifier.width(8.dp))
-//                    Text(
-//                        text = "Symptoms, Treatment and Prevention",
-//                        color = Color.White,
-//                        fontWeight = FontWeight.SemiBold,
-//                        fontSize = 14.sp
-//                    )
-//                }
             }
         }
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-        SectionHeader(
-            icon = Icons.Default.ShoppingCart,
-            title = "Treatment Plan"
-        )
-
-        PreventionCard(
-            title = "Tool Sanitation",
-            color = Color(0xFFFFF3E0),
-            tips = listOf(
-                "Disinfect pruning tools between plants.",
-                "Use 70% alcohol or bleach solution.",
-                "Clean hands thoroughly after handling."
-            )
-        )
     }
 }
 
 @Composable
-fun StatusChip(label: String, color: Color) {
+fun StatusChip(
+    label: String,
+    color: Color,
+    horizontalPadding: Dp = 14.dp,
+    verticalPadding: Dp = 8.dp,
+    roundedLevel: Dp = 12.dp
+) {
     Box(
         modifier = Modifier
-            .background(color.copy(alpha = 0.1f), RoundedCornerShape(12.dp))
-            .padding(horizontal = 14.dp, vertical = 8.dp)
+            .background(color.copy(alpha = 0.1f), RoundedCornerShape(roundedLevel))
+            .padding(horizontal = horizontalPadding, vertical = verticalPadding)
     ) {
         Text(label, color = color, fontWeight = FontWeight.Medium)
     }
 }
 
+@Preview(showBackground = true, heightDp = 1250)
 @Composable
-fun RiskInfo(title: String, value: String, color: Color, icon: ImageVector) {
-    Column(
-        horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = Modifier
-            .clip(RoundedCornerShape(12.dp))
-            .background(Color.White)
-            .padding(12.dp)
-    ) {
-        Icon(icon, contentDescription = null, tint = color)
-        Spacer(Modifier.height(6.dp))
-        Text(title, color = Color.Gray, fontSize = 13.sp)
-        Text(value, color = color, fontWeight = FontWeight.Bold, fontSize = 14.sp)
+fun DiagnosisResultPreview() {
+    DoctorPlantTheme {
+        DiagnosisScreen(rememberNavController())
     }
-}
-
-@Composable
-fun PreventionCard(title: String, color: Color, tips: List<String>) {
-    Card(
-        shape = RoundedCornerShape(16.dp),
-        colors = CardDefaults.cardColors(containerColor = color),
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(vertical = 8.dp)
-    ) {
-        Column(Modifier.padding(12.dp)) {
-            Text(title, fontWeight = FontWeight.Bold, color = Color.Black)
-            Spacer(Modifier.height(4.dp))
-            tips.forEach { tip ->
-                Row(Modifier.padding(vertical = 2.dp)) {
-                    Text("• ", fontWeight = FontWeight.Bold, color = Color.Black)
-                    Text(tip, fontSize = 13.sp, color = Color.Black)
-                }
-            }
-        }
-    }
-}
-
-@Composable
-fun SectionHeader(icon: ImageVector, title: String) {
-    Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.padding(bottom = 4.dp)) {
-        Icon(icon, contentDescription = null, tint = Color(0xFF000000))
-        Spacer(Modifier.width(8.dp))
-        Text(title, fontWeight = FontWeight.Bold, fontSize = 18.sp, color = Color.Black)
-    }
-}
-
-
-
-@Preview(showBackground = true, backgroundColor = 0xFFFFFFFF, heightDp = 1200)
-@Composable
-fun DiagnosisScreenPreview() {
-    DiagnosisScreen(navController = rememberNavController())
 }
