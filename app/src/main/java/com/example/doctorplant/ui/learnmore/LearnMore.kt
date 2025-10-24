@@ -235,7 +235,7 @@ fun LearnMoreScreen() {
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .background(Color(0xFF212121), shape = RoundedCornerShape(16.dp))
+                    .background(Color(0xFF111827), shape = RoundedCornerShape(16.dp))
                     .padding(20.dp)
             ) {
                 Column(horizontalAlignment = Alignment.Start) {
