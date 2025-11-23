@@ -1,6 +1,6 @@
 package com.example.doctorplant.ui.diagnosis
 
-import androidx.compose.foundation.Image
+import android.net.Uri
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -18,65 +18,132 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Emergency
 import androidx.compose.material.icons.filled.Info
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.ProgressIndicatorDefaults
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.navigation.NavController
-import androidx.navigation.compose.rememberNavController
+import coil.compose.AsyncImage
 import com.example.doctorplant.R
-import com.example.doctorplant.ui.theme.Black600
+import com.example.doctorplant.utils.TimeUtils.customFormatDuration
+import com.example.doctorplant.data.model.DiseaseInformation
+import com.example.doctorplant.data.model.PlantDisease
 import com.example.doctorplant.ui.theme.DoctorPlantTheme
+import com.example.doctorplant.ui.theme.GreenHome
 
 @Composable
-fun DiagnosisScreen(navController: NavController) {
+fun DiagnosisScreen(
+    imageUri: Uri,
+    uiState: DiagnosisUiState,
+    onBackClick: () -> Unit
+) {
+    var startTime by rememberSaveable { mutableLongStateOf(0L) }
+    var scanDuration by rememberSaveable { mutableStateOf("") }
+
+    LaunchedEffect(uiState) {
+        when (uiState) {
+            is DiagnosisUiState.Loading -> {
+                startTime = System.currentTimeMillis()
+            }
+
+            is DiagnosisUiState.Success -> {
+                if (startTime != 0L) {
+                    val endTime = System.currentTimeMillis()
+                    val diff = endTime - startTime
+
+                    scanDuration = customFormatDuration(diff)
+                }
+            }
+
+            else -> {}
+        }
+    }
+
+    when (uiState) {
+        DiagnosisUiState.Idle,
+        DiagnosisUiState.Loading -> {
+            Box(
+                Modifier.fillMaxSize(),
+                contentAlignment = Alignment.Center
+            ) {
+                CircularProgressIndicator()
+            }
+        }
+
+        is DiagnosisUiState.Error -> {
+            Column(
+                Modifier.fillMaxSize(),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center
+            ) {
+                Text("Erro: ${uiState.message}", color = Color.Red)
+                Button(
+                    onClick = onBackClick,
+                    shape = RoundedCornerShape(12.dp),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = GreenHome,
+                        contentColor = Color.White
+                    ),
+                    modifier = Modifier.height(54.dp)
+                ) {
+                    Text("Voltar")
+                }
+            }
+        }
+
+        is DiagnosisUiState.Success -> {
+            DiagnosisSuccessScreen(
+                imageUri = imageUri,
+                data = uiState.data,
+                scanTime = scanDuration,
+                onBack = onBackClick
+            )
+        }
+    }
+}
+
+@Composable
+fun DiagnosisSuccessScreen(
+    imageUri: Uri,
+    data: PlantDisease,
+    scanTime: String,
+    onBack: () -> Unit
+) {
     Column(
         modifier = Modifier
             .fillMaxSize()
             .verticalScroll(rememberScrollState())
             .padding(16.dp)
     ) {
-        var name by remember { mutableStateOf("") }
-
-        OutlinedTextField(
-            value = name,
-            onValueChange = { name = it },
-            label = {
-                Text(
-                    text = "Diagnosis name...",
-                    color = Black600
-                ) },
-            singleLine = true,
-            shape = RoundedCornerShape(8.dp),
-            modifier = Modifier
-                .width(250.dp)
-                .padding(horizontal = 12.dp)
-                .align(Alignment.CenterHorizontally)
-        )
-
-
         Spacer(modifier = Modifier.height(12.dp))
 
         Box(
@@ -86,14 +153,15 @@ fun DiagnosisScreen(navController: NavController) {
                 .clip(RoundedCornerShape(16.dp))
                 .background(Color(0xFFE0E0E0))
         ) {
-            Image(
-                painter = painterResource(R.drawable.imagemsoja),
-                contentDescription = "Analyzed Image",
-                contentScale = ContentScale.Crop,
+            AsyncImage(
+                model = imageUri,
+                contentDescription = "Foto da planta",
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(420.dp)
-                    .clip(RoundedCornerShape(16.dp))
+                    .height(400.dp)
+                    .background(Color.Gray),
+                placeholder = debugPlaceholder(R.drawable.imagemsoja),
+                contentScale = ContentScale.Crop
             )
             Text(
                 text = "Analyzed Image",
@@ -112,67 +180,73 @@ fun DiagnosisScreen(navController: NavController) {
             horizontalArrangement = Arrangement.SpaceEvenly,
             modifier = Modifier.fillMaxWidth()
         ) {
-            StatusChip("Identified", Color(0xFF4CAF50))
-            StatusChip("2.3s Scan", Color(0xFF9C27B0))
+            StatusChip("Identificado", Color(0xFF4CAF50))
+            StatusChip(
+                label = scanTime.ifEmpty { "-- s Scan" },
+                color = Color(0xFF9C27B0)
+            )
         }
 
         Spacer(Modifier.height(16.dp))
 
         Column(modifier = Modifier.padding(8.dp)) {
-            Row {
-                Column {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.Top
+            ) {
+                Column(
+                    modifier = Modifier
+                        .weight(1f)
+                        .padding(end = 8.dp)
+                ) {
                     Text(
-                        text = "Leaf Spot",
+                        text = data.information.name,
                         color = Color.Black,
-                        style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold)
+                        style = MaterialTheme.typography.titleLarge.copy(
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 28.sp
+                        )
                     )
 
                     Text(
-                        text = "Xanthomonas campestris",
+                        text = data.technicalId,
                         color = Color(0xFF757575),
                         style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold)
                     )
                 }
 
-                Spacer(Modifier.weight(1f))
-
-                Box(modifier = Modifier.padding(top = 8.dp)) {
-                    StatusChip(
-                        label = "High Severity",
-                        Color(0xFFD32F2F),
-                        horizontalPadding = 10.dp,
-                        verticalPadding = 4.dp,
-                        roundedLevel = 20.dp
-                    )
+                if (data.diagnosis != "Saudável") {
+                    Box(modifier = Modifier.padding(top = 8.dp)) {
+                        StatusChip(
+                            label = "Doente",
+                            Color(0xFFD32F2F),
+                            horizontalPadding = 10.dp,
+                            verticalPadding = 4.dp,
+                            roundedLevel = 20.dp
+                        )
+                    }
                 }
             }
 
             Spacer(Modifier.height(8.dp))
 
-//            Row(
-//                verticalAlignment = Alignment.CenterVertically,
-//                horizontalArrangement = Arrangement.spacedBy(8.dp)
-//            ) {
-//                AssistChip(
-//                    onClick = {},
-//                    label = { Text("Low Severity") },
-//                    leadingIcon = {
-//                        Icon(
-//                            imageVector = Icons.Default.CheckCircle,
-//                            contentDescription = null,
-//                            tint = Color(0xFF4CAF50)
-//                        )
-//                    }
-//                )
-//            }
-
-            Text("Confidence Level", color = Color.Gray, fontSize = 14.sp)
+            Text("Nível de confiança", color = Color.Gray, fontSize = 14.sp)
             Spacer(Modifier.height(4.dp))
+
+            val progressValue = remember(data.confidence) {
+                data.confidence
+                    .replace("%", "")
+                    .trim()
+                    .toFloatOrNull()
+                    ?.div(100f)
+                    ?: 0f
+            }
+
             Row(verticalAlignment = Alignment.CenterVertically) {
-                Text("99.2%", color = Color(0xFF2E7D32), fontWeight = FontWeight.Bold)
+                Text(data.confidence, color = Color(0xFF2E7D32), fontWeight = FontWeight.Bold)
                 Spacer(Modifier.width(8.dp))
                 LinearProgressIndicator(
-                    progress = { 0.992f },
+                    progress = { progressValue },
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(8.dp)
@@ -199,14 +273,14 @@ fun DiagnosisScreen(navController: NavController) {
                         )
                         Spacer(Modifier.width(6.dp))
                         Text(
-                            text = "Description",
+                            text = "Descrição da doença",
                             style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.SemiBold)
                         )
                     }
 
                     Spacer(Modifier.height(8.dp))
                     Text(
-                        text = "A fungal or bacterial infection causing circular spots on leaves, ranging from brown to black. While usually not fatal, it can weaken plants and reduce their aesthetic appeal.",
+                        text = data.information.description,
                         style = MaterialTheme.typography.bodyMedium,
                         color = Color.DarkGray
                     )
@@ -215,30 +289,22 @@ fun DiagnosisScreen(navController: NavController) {
 
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         Icon(
-                            painter = painterResource(R.drawable.ic_treatment),
+                            imageVector = Icons.Default.Emergency,
                             contentDescription = null,
                             tint = Color(0xFF4CAF50)
                         )
                         Spacer(Modifier.width(6.dp))
                         Text(
-                            text = "Recommended Treatment",
+                            text = "Sintomas",
                             style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.SemiBold)
                         )
                     }
 
                     Spacer(Modifier.height(8.dp))
 
-                    val treatments = listOf(
-                        "Prune affected leaves and dispose of properly",
-                        "Avoid overhead watering to reduce moisture on leaves",
-                        "Apply organic copper fungicide as a preventive measure",
-                        "Ensure plants have adequate spacing for airflow",
-                        "Clean up fallen leaves and debris regularly"
-                    )
-
-                    treatments.forEachIndexed { index, treatment ->
+                    data.information.symptoms.forEachIndexed { index, symptom ->
                         Row(
-                            verticalAlignment = Alignment.Top,
+                            verticalAlignment = Alignment.CenterVertically,
                             modifier = Modifier.padding(vertical = 4.dp)
                         ) {
                             Surface(
@@ -257,12 +323,34 @@ fun DiagnosisScreen(navController: NavController) {
                             }
                             Spacer(Modifier.width(12.dp))
                             Text(
-                                text = treatment,
+                                text = symptom,
                                 style = MaterialTheme.typography.bodyMedium,
                                 color = Color.DarkGray
                             )
                         }
                     }
+
+                    Spacer(Modifier.height(8.dp))
+
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Icon(
+                            painter = painterResource(R.drawable.ic_treatment),
+                            contentDescription = null,
+                            tint = Color(0xFF4CAF50)
+                        )
+                        Spacer(Modifier.width(6.dp))
+                        Text(
+                            text = "Tratamento",
+                            style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.SemiBold)
+                        )
+                    }
+
+                    Spacer(Modifier.height(8.dp))
+                    Text(
+                        text = data.information.treatment,
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = Color.DarkGray
+                    )
                 }
             }
         }
@@ -286,10 +374,38 @@ fun StatusChip(
     }
 }
 
+@Composable
+fun debugPlaceholder(debugPreviewImage: Int): Painter? {
+    if (LocalInspectionMode.current) {
+        return painterResource(id = debugPreviewImage)
+    }
+    return null
+}
+
 @Preview(showBackground = true, heightDp = 1250)
 @Composable
 fun DiagnosisResultPreview() {
     DoctorPlantTheme {
-        DiagnosisScreen(rememberNavController())
+        DiagnosisScreen(
+            Uri.EMPTY,
+            DiagnosisUiState.Success(
+                PlantDisease(
+                    diagnosis = "Doente",
+                    technicalId = "rust_fungus_01",
+                    confidence = "99.29%",
+                    information = DiseaseInformation(
+                        name = "Ferrugem da Folha",
+                        description = "Doença fúngica que afeta o processo de fotossíntese da planta, criando manchas alaranjadas.",
+                        symptoms = listOf(
+                            "Pequenas pústulas (bolinhas) na parte de baixo da folha.",
+                            "Cor amarelada que evolui para marrom-escuro.",
+                            "Desfolha precoce.",
+                            "Em casos graves, pode ocorrer morte da planta."
+                        ),
+                        treatment = "Remover as folhas infectadas imediatamente e aplicar fungicida à base de cobre."
+                    )
+                )
+            )
+        ) {}
     }
 }

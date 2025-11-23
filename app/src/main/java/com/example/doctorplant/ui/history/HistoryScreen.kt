@@ -21,16 +21,13 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.DateRange
-import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.OutlinedButton
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -56,31 +53,31 @@ fun HistoryScreen(navController: NavController) {
     val historyItems = listOf(
         HistoryItem(
             plantName = "Tomato Plant",
-            status = "Diseased",
+            status = true,
             disease = "Late Blight Disease",
             confidence = 94,
             advice = "Immediate treatment required",
-            time = "2:34 PM",
+//            time = "2:34 PM",
             imageRes = R.drawable.ic_alert,
             color = Color(0xFFFFEBEE)
         ),
         HistoryItem(
             plantName = "Rose Bush",
-            status = "Healthy",
+            status = false,
             disease = "Plant is Healthy",
             confidence = 98,
             advice = "Continue current care routine",
-            time = "11:45 AM",
+//            time = "11:45 AM",
             imageRes = R.drawable.ic_alert,
             color = Color(0xFFE8F5E9)
         ),
         HistoryItem(
             plantName = "Cucumber Plant",
-            status = "Warning",
+            status = true,
             disease = "Powdery Mildew",
             confidence = 87,
             advice = "Early stage - treatable",
-            time = "9:22 AM",
+//            time = "9:22 AM",
             imageRes = R.drawable.ic_alert,
             color = Color(0xFFFFFDE7)
         )
@@ -108,33 +105,33 @@ fun HistoryScreen(navController: NavController) {
 //                unfocusedContainerColor = Color(0xFFE0E0E0)
 //            )
 //        )
-
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 16.dp, vertical = 8.dp),
-            horizontalArrangement = Arrangement.SpaceBetween
-        ) {
-            FilterButton("All Time", true)
-            FilterButton("Today", false)
-            FilterButton("This Week", false)
-        }
-
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .background(gradient)
-                .padding(vertical = 24.dp)
-        ) {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceEvenly
-            ) {
-                StatItem("247", "Total Scans", Color.White)
-                StatItem("38", "Diseases Found", Color.White)
-                StatItem("85%", "Accuracy Rate", Color.White)
-            }
-        }
+//
+//        Row(
+//            modifier = Modifier
+//                .fillMaxWidth()
+//                .padding(horizontal = 16.dp, vertical = 8.dp),
+//            horizontalArrangement = Arrangement.SpaceBetween
+//        ) {
+//            FilterButton("All Time", true)
+//            FilterButton("Today", false)
+//            FilterButton("This Week", false)
+//        }
+//
+//        Box(
+//            modifier = Modifier
+//                .fillMaxWidth()
+//                .background(gradient)
+//                .padding(vertical = 24.dp)
+//        ) {
+//            Row(
+//                modifier = Modifier.fillMaxWidth(),
+//                horizontalArrangement = Arrangement.SpaceEvenly
+//            ) {
+//                StatItem("247", "Total Scans", Color.White)
+//                StatItem("38", "Diseases Found", Color.White)
+//                StatItem("85%", "Accuracy Rate", Color.White)
+//            }
+//        }
 
         Spacer(Modifier.height(16.dp))
         Text(
@@ -157,10 +154,8 @@ fun HistoryScreen(navController: NavController) {
 @Composable
 fun HistoryCard(item: HistoryItem) {
     val (dotColor, statusColor) = when (item.status) {
-        "Diseased" -> Color.Red to Color(0xFFFFEBEE)
-        "Healthy" -> Color(0xFF4CAF50) to Color(0xFFE8F5E9)
-        "Warning" -> Color(0xFFFFC107) to Color(0xFFFFFDE7)
-        else -> Color.Gray to Color.LightGray
+        true -> Color.Red to Color(0xFFFFEBEE)
+        false -> Color(0xFF4CAF50) to Color(0xFFE8F5E9)
     }
 
     Card(
@@ -169,7 +164,7 @@ fun HistoryCard(item: HistoryItem) {
         elevation = CardDefaults.cardElevation(2.dp),
         modifier = Modifier.fillMaxWidth()
     ) {
-        Row (verticalAlignment = Alignment.CenterVertically, modifier = Modifier.padding(8.dp)) {
+        Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.padding(8.dp)) {
             Spacer(modifier = Modifier.width(8.dp))
             Image(
                 painter = painterResource(R.drawable.imagemsoja),
@@ -187,7 +182,7 @@ fun HistoryCard(item: HistoryItem) {
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         Spacer(Modifier.width(8.dp))
                         Text(
-                            text =item.plantName,
+                            text = item.plantName,
                             fontSize = 16.sp,
                             fontWeight = FontWeight.Bold,
                             color = Color.Black
@@ -201,7 +196,11 @@ fun HistoryCard(item: HistoryItem) {
                                 .background(dotColor, CircleShape)
                         )
                         Spacer(Modifier.width(4.dp))
-                        Text(item.status, color = dotColor, fontSize = 12.sp)
+                        if (item.status) {
+                            Text("Diseased", color = dotColor, fontSize = 12.sp)
+                        } else {
+                            Text("Healthy", color = dotColor, fontSize = 12.sp)
+                        }
                     }
                 }
 
@@ -215,7 +214,7 @@ fun HistoryCard(item: HistoryItem) {
                 ) {
                     Column(
                         verticalArrangement = Arrangement.spacedBy(4.dp)
-                    ){
+                    ) {
                         Text(
                             text = item.disease,
                             fontSize = 14.sp,

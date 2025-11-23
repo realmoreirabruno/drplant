@@ -1,5 +1,6 @@
 package com.example.doctorplant.data.repository
 
+import android.util.Log
 import com.example.doctorplant.data.local.DiagnosisDao
 import com.example.doctorplant.data.model.DiagnosisHistory
 import com.example.doctorplant.data.model.PlantDisease
@@ -12,17 +13,27 @@ import java.io.File
 
 class DiagnosisRepository(
     private val api: DiagnosisApi,
-    private val dao: DiagnosisDao
+//    private val dao: DiagnosisDao
 ) {
     suspend fun diagnosePlant(imageFile: File): PlantDisease? {
         val requestFile = imageFile.asRequestBody("image/*".toMediaTypeOrNull())
-        val multipart = MultipartBody.Part.createFormData("image", imageFile.name, requestFile)
+        val multipart = MultipartBody.Part.createFormData("file", imageFile.name, requestFile)
 
-        val response = api.diagnosePlant(multipart)
-        return if (response.isSuccessful) response.body() else null
+        try {
+            val response = api.diagnosePlant(multipart)
+            if (response.isSuccessful) {
+                return response.body()
+            } else {
+                Log.e("API_ERROR", "Code: ${response.code()} Message: ${response.errorBody()?.string()}")
+                return null
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+            return null
+        }
     }
-
-    fun getHistory(): Flow<List<DiagnosisHistory>> = dao.getAll()
-
-    suspend fun saveDiagnosis(history: DiagnosisHistory) = dao.insert(history)
+//
+//    fun getHistory(): Flow<List<DiagnosisHistory>> = dao.getAll()
+//
+//    suspend fun saveDiagnosis(history: DiagnosisHistory) = dao.insert(history)
 }

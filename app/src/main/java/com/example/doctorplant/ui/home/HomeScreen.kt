@@ -15,7 +15,6 @@ import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -24,7 +23,6 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ShoppingCart
 import androidx.compose.material.icons.filled.TipsAndUpdates
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -58,13 +56,20 @@ fun HomeScreen(navController: NavController) {
             .verticalScroll(rememberScrollState())
             .background(Color(0xFFF8F8F8))
     ) {
-        // TODO: Adicionar o preview
         val galleryLauncher = rememberLauncherForActivityResult(
             contract = ActivityResultContracts.GetContent()
         ) { uri: Uri? ->
-            uri?.let {
-//                onPhotoCaptured(it)
-                navController.popBackStack()
+            // O usuário pode cancelar a seleção (retornando null), por isso o 'let'
+            uri?.let { selectedUri ->
+                val encodedUri = Uri.encode(selectedUri.toString())
+                navController.navigate("diagnosis/$encodedUri") {
+                    // Remove a tela atual da pilha para o usuário não voltar
+                    // para a seleção se apertar "Voltar" na tela de resultado.
+                    popUpTo(navController.graph.startDestinationId) {
+                        saveState = false
+                    }
+                    launchSingleTop = true
+                }
             }
         }
 
@@ -161,16 +166,16 @@ fun HomeScreen(navController: NavController) {
                     )
                 }
 
-                Spacer(modifier = Modifier.height(16.dp))
-
-                Row(
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    StatItem("24", "Scans Today", Color(0xFF4CAF50))
-                    StatItem("156", "Total Scans", Color(0xFF1565C0))
-                    StatItem("89%", "Accuracy", Color(0xFFD32F2F))
-                }
+//                TODO: Fazer essa parte se der tempo
+//                Spacer(modifier = Modifier.height(16.dp))
+//                Row(
+//                    horizontalArrangement = Arrangement.SpaceBetween,
+//                    modifier = Modifier.fillMaxWidth()
+//                ) {
+//                    StatItem("24", "Scans Today", Color(0xFF4CAF50))
+//                    StatItem("156", "Total Scans", Color(0xFF1565C0))
+//                    StatItem("89%", "Accuracy", Color(0xFFD32F2F))
+//                }
             }
         }
 
@@ -179,14 +184,6 @@ fun HomeScreen(navController: NavController) {
         Text(
             text = "Scan Your Plant",
             style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
-            textAlign = TextAlign.Center,
-            modifier = Modifier.fillMaxWidth()
-        )
-
-        Text(
-            text = "Take a photo or upload an image to identify diseases",
-            color = Color.Gray,
-            fontSize = 13.sp,
             textAlign = TextAlign.Center,
             modifier = Modifier.fillMaxWidth()
         )
@@ -215,9 +212,9 @@ fun HomeScreen(navController: NavController) {
                     modifier = Modifier.size(40.dp)
                 )
                 Spacer(modifier = Modifier.height(8.dp))
-                Text("Tap to capture", fontWeight = FontWeight.Bold, color = Color(0xFF2E7D32))
+                Text("Tap above to capture", fontWeight = FontWeight.Bold, color = Color(0xFF2E7D32))
                 Text(
-                    "or upload from gallery",
+                    "or upload your picture from gallery",
                     color = Color.Gray,
                     fontSize = 13.sp
                 )
@@ -249,7 +246,11 @@ fun HomeScreen(navController: NavController) {
                 border = BorderStroke(1.dp, Color(0xFF81C784)),
                 modifier = Modifier.weight(1f)
             ) {
-                Icon(painter = painterResource(R.drawable.ic_folder), contentDescription = null, tint = Color(0xFF2E7D32))
+                Icon(
+                    painter = painterResource(R.drawable.ic_folder),
+                    contentDescription = null,
+                    tint = Color(0xFF2E7D32)
+                )
                 Spacer(modifier = Modifier.width(8.dp))
                 Text("From Gallery", color = Color(0xFF2E7D32))
             }

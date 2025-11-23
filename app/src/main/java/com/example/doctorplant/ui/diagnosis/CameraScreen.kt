@@ -14,18 +14,23 @@ import androidx.camera.core.ImageCaptureException
 import androidx.camera.core.Preview
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.camera.view.PreviewView
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
@@ -39,7 +44,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.LifecycleOwner
@@ -47,6 +54,7 @@ import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import com.example.doctorplant.R
+import com.example.doctorplant.ui.theme.GreenHome
 import java.io.File
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
@@ -54,7 +62,6 @@ import java.util.concurrent.Executors
 @Composable
 fun CameraScreen(
     navController: NavController,
-    onPhotoCaptured: (Uri) -> Unit
 ) {
     val context = LocalContext.current
     val lifecycleOwner = LocalLifecycleOwner.current
@@ -90,7 +97,6 @@ fun CameraScreen(
     CameraContent(
         context = context,
         navController = navController,
-        onPhotoCaptured = onPhotoCaptured,
         cameraExecutor = cameraExecutor,
         lifecycleOwner = lifecycleOwner
     )
@@ -100,7 +106,6 @@ fun CameraScreen(
 private fun CameraContent(
     context: Context,
     navController: NavController,
-    onPhotoCaptured: (Uri) -> Unit,
     cameraExecutor: ExecutorService,
     lifecycleOwner: LifecycleOwner
 ) {
@@ -177,7 +182,7 @@ private fun CameraContent(
                 .size(72.dp)
                 .background(Color.White, CircleShape)
         ) {
-            Icon(painterResource(R.drawable.ic_camera), contentDescription = "Capturar foto")
+            Icon(painterResource(R.drawable.ic_camera), tint = GreenHome, contentDescription = "Capturar foto")
         }
 
         // Preview da imagem tirada
@@ -197,14 +202,40 @@ private fun CameraContent(
                         .align(Alignment.BottomCenter)
                         .padding(24.dp)
                 ) {
-                    Button(onClick = { imageUri = null }) {
-                        Text("Retake")
+                    OutlinedButton(
+                        onClick = { imageUri = null },
+                        shape = RoundedCornerShape(12.dp),
+                        border = BorderStroke(2.dp, GreenHome),
+                        modifier = Modifier.height(54.dp)
+                    ) {
+                        Text(
+                            text = "Tirar outra",
+                            color = GreenHome,
+                            fontSize = 16.sp,
+                            fontWeight = FontWeight.Medium
+                        )
                     }
-                    Button(onClick = {
-                        onPhotoCaptured(uri)
-                        navController.popBackStack()
-                    }) {
-                        Text("Use Photo")
+
+                    Button(
+                        onClick = {
+                            val encodedUri = Uri.encode(uri.toString())
+                            navController.navigate("diagnosis/$encodedUri") {
+                                popUpTo(navController.graph.startDestinationId) { saveState = false }
+                                launchSingleTop = true
+                            }
+                        },
+                        shape = RoundedCornerShape(12.dp),
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = GreenHome,
+                            contentColor = Color.White
+                        ),
+                        modifier = Modifier.height(54.dp)
+                    ) {
+                        Text(
+                            text = "Usar esta foto",
+                            fontSize = 16.sp,
+                            fontWeight = FontWeight.SemiBold
+                        )
                     }
                 }
             }

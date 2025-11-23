@@ -1,24 +1,56 @@
 package com.example.doctorplant.ui
 
+import android.net.Uri
+import androidx.compose.animation.AnimatedContentTransitionScope
+import androidx.compose.animation.core.tween
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.navArgument
+import com.example.doctorplant.ui.components.getRouteIndex
 import com.example.doctorplant.ui.diagnosis.CameraScreen
 import com.example.doctorplant.ui.diagnosis.DiagnosisScreen
+import com.example.doctorplant.ui.diagnosis.DiagnosisViewModel
 import com.example.doctorplant.ui.history.HistoryScreen
 import com.example.doctorplant.ui.home.HomeScreen
 import com.example.doctorplant.ui.landing.LandingScreen
 import com.example.doctorplant.ui.learnmore.LearnMoreScreen
 import com.example.doctorplant.ui.login.LoginScreen
 import com.example.doctorplant.ui.register.RegisterScreen
+import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun AppNavGraph(navController: NavHostController, modifier: Modifier = Modifier) {
     NavHost(
         navController = navController,
         startDestination = "home",
+        enterTransition = {
+            val fromIndex = getRouteIndex(initialState.destination.route)
+            val toIndex = getRouteIndex(targetState.destination.route)
+
+            if (toIndex > fromIndex) {
+                slideIntoContainer(AnimatedContentTransitionScope.SlideDirection.Left, animationSpec = tween(500))
+            } else {
+                slideIntoContainer(AnimatedContentTransitionScope.SlideDirection.Right, animationSpec = tween(500))
+            }
+        },
+        exitTransition = {
+            val fromIndex = getRouteIndex(initialState.destination.route)
+            val toIndex = getRouteIndex(targetState.destination.route)
+
+            if (toIndex > fromIndex) {
+                slideOutOfContainer(AnimatedContentTransitionScope.SlideDirection.Left, animationSpec = tween(500))
+            } else {
+                slideOutOfContainer(AnimatedContentTransitionScope.SlideDirection.Right, animationSpec = tween(500))
+            }
+        },
         modifier = modifier
     ) {
         composable("landing") { LandingScreen(navController) }
@@ -26,13 +58,31 @@ fun AppNavGraph(navController: NavHostController, modifier: Modifier = Modifier)
         composable("register") { RegisterScreen(navController) }
         composable("home") { HomeScreen(navController) }
         composable("learn_more") { LearnMoreScreen() }
-        composable("camera") {
-            CameraScreen(
-                navController,
-                onPhotoCaptured = {}
+        composable("camera") { CameraScreen(navController) }
+        composable("history") { HistoryScreen(navController) }
+        composable(
+            route = "diagnosis/{imageUri}",
+            arguments = listOf(navArgument("imageUri") { type = NavType.StringType })
+        ) { backStackEntry ->
+            val imageUriString = backStackEntry.arguments?.getString("imageUri")
+            val imageUri = Uri.parse(Uri.decode(imageUriString))
+            val context = LocalContext.current
+
+            val viewModel: DiagnosisViewModel = koinViewModel()
+
+            val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+
+            LaunchedEffect(key1 = imageUri) {
+                viewModel.diagnosePlant(context, imageUri)
+            }
+
+            DiagnosisScreen(
+                imageUri = imageUri,
+                uiState = uiState,
+                onBackClick = {
+                    navController.popBackStack()
+                }
             )
         }
-        composable("diagnosis") { DiagnosisScreen(navController) }
-        composable("history") { HistoryScreen(navController) }
     }
 }

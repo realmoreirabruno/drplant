@@ -78,6 +78,12 @@ dependencies {
     implementation (libs.koin.android)
     implementation(libs.koin.androidx.navigation)
 
+    // 1. Para usar 'koinViewModel()'
+    implementation("io.insert-koin:koin-androidx-compose:3.5.0")
+
+    // 2. Para usar 'collectAsStateWithLifecycle()'
+    implementation("androidx.lifecycle:lifecycle-runtime-compose:2.6.2")
+
     //Testing
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

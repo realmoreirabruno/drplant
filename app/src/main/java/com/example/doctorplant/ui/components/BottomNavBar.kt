@@ -23,6 +23,15 @@ data class BottomNavItem(
     val icon: Painter
 )
 
+fun getRouteIndex(route: String?): Int {
+    return when (route) {
+        "home" -> 0
+        "camera" -> 1
+        "history" -> 2
+        else -> 0
+    }
+}
+
 @Composable
 fun BottomNavBar(navController: NavHostController) {
     val navBackStackEntry = navController.currentBackStackEntryAsState()
