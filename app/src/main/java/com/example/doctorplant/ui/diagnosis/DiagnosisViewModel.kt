@@ -2,11 +2,9 @@ package com.example.doctorplant.ui.diagnosis
 
 import android.content.Context
 import android.net.Uri
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.doctorplant.data.model.DiagnosisHistory
 import com.example.doctorplant.data.model.PlantDisease
 import com.example.doctorplant.data.repository.DiagnosisRepository
 import kotlinx.coroutines.Dispatchers
@@ -27,26 +25,21 @@ sealed class DiagnosisUiState {
 class DiagnosisViewModel(
     private val repository: DiagnosisRepository
 ) : ViewModel() {
-
-    // 1. Declaração do Estado usando StateFlow
-    // O _uiState é mutável e privado (só o ViewModel altera)
     private val _uiState = MutableStateFlow<DiagnosisUiState>(DiagnosisUiState.Idle)
 
-    // O uiState é imutável e público (a UI só observa/lê)
     val uiState = _uiState.asStateFlow()
 
     fun diagnosePlant(context: Context, imageUri: Uri) {
         _uiState.value = DiagnosisUiState.Loading
 
         viewModelScope.launch {
-            // Operações de arquivo (uriToFile) e Banco/Rede (repository)
-            // devem rodar em Dispatchers.IO para não travar a tela.
             val newState = withContext(Dispatchers.IO) {
                 try {
                     val file = uriToFile(context, imageUri)
                     val result = repository.diagnosePlant(file)
 
                     if (result != null) {
+                        saveToHistory(imageUri, result)
                         DiagnosisUiState.Success(result)
                     } else {
                         DiagnosisUiState.Error("Erro no diagnóstico")
@@ -69,5 +62,21 @@ class DiagnosisViewModel(
             }
         }
         return tempFile
+    }
+
+    private fun saveToHistory(uri: Uri, disease: PlantDisease) {
+        viewModelScope.launch(Dispatchers.IO) {
+            val historyItem = DiagnosisHistory(
+                imageUri = uri.toString(),
+                diseaseName = disease.information.name,
+                diagnosisStatus = disease.diagnosis,
+                technicalId = disease.technicalId,
+                description = disease.information.description,
+                treatment = disease.information.treatment,
+                symptoms = disease.information.symptoms,
+                confidence = disease.confidence
+            )
+            repository.saveHistory(historyItem)
+        }
     }
 }

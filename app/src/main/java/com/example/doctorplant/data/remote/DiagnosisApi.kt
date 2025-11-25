@@ -8,7 +8,7 @@ import retrofit2.http.Multipart
 import retrofit2.http.POST
 import retrofit2.http.Part
 
-interface DiagnosisApi {
+fun interface DiagnosisApi {
     @Multipart
     @Headers("Authorization: Bearer minha-api-soja-api-secrettoken-951753")
     @POST("classify/")

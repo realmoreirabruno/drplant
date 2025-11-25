@@ -1,11 +1,12 @@
 package com.example.doctorplant.ui.history
 
+import android.net.Uri
 import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -15,10 +16,10 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material3.Button
@@ -32,63 +33,100 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.navigation.NavController
-import androidx.navigation.compose.rememberNavController
+import coil.compose.AsyncImage
 import com.example.doctorplant.R
-import com.example.doctorplant.data.model.HistoryItem
+import com.example.doctorplant.data.model.DiagnosisHistory
 
 @Composable
-fun HistoryScreen(navController: NavController) {
-    val gradient = Brush.horizontalGradient(
-        colors = listOf(Color(0xFF2E7D32), Color(0xFF43A047))
-    )
-
-    val historyItems = listOf(
-        HistoryItem(
-            plantName = "Tomato Plant",
-            status = true,
-            disease = "Late Blight Disease",
-            confidence = 94,
-            advice = "Immediate treatment required",
-//            time = "2:34 PM",
-            imageRes = R.drawable.ic_alert,
-            color = Color(0xFFFFEBEE)
-        ),
-        HistoryItem(
-            plantName = "Rose Bush",
-            status = false,
-            disease = "Plant is Healthy",
-            confidence = 98,
-            advice = "Continue current care routine",
-//            time = "11:45 AM",
-            imageRes = R.drawable.ic_alert,
-            color = Color(0xFFE8F5E9)
-        ),
-        HistoryItem(
-            plantName = "Cucumber Plant",
-            status = true,
-            disease = "Powdery Mildew",
-            confidence = 87,
-            advice = "Early stage - treatable",
-//            time = "9:22 AM",
-            imageRes = R.drawable.ic_alert,
-            color = Color(0xFFFFFDE7)
-        )
-    )
-
-    Column(
+fun HistoryScreen(
+    historyItems: List<DiagnosisHistory>,
+    onItemClick: (DiagnosisHistory) -> Unit
+) {
+    LazyColumn(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color(0xFFF8F9FA))
-            .verticalScroll(rememberScrollState())
+            .background(Color(0xFFF8F9FA)),
+        contentPadding = PaddingValues(16.dp),
+        verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
+
+        if (historyItems.isEmpty()) {
+            item {
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(200.dp),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text("Nenhum diagnóstico salvo ainda.", color = Color.Gray)
+                }
+            }
+        } else {
+            items(historyItems) { item ->
+                HistoryCard(
+                    item = item,
+                    onClick = { onItemClick(item) }
+                )
+            }
+        }
+    }
+}
+
+//@Composable
+//fun HistoryScreen(
+//    historyItems: List<DiagnosisHistory>,
+//    onItemClick: (DiagnosisHistory) -> Unit
+//) {
+//    val gradient = Brush.horizontalGradient(
+//        colors = listOf(Color(0xFF2E7D32), Color(0xFF43A047))
+//    )
+//
+//    val historyItems = listOf(
+//        HistoryItem(
+//            plantName = "Tomato Plant",
+//            status = true,
+//            disease = "Late Blight Disease",
+//            confidence = 94,
+//            advice = "Immediate treatment required",
+////            time = "2:34 PM",
+//            imageRes = R.drawable.ic_alert,
+//            color = Color(0xFFFFEBEE)
+//        ),
+//        HistoryItem(
+//            plantName = "Rose Bush",
+//            status = false,
+//            disease = "Plant is Healthy",
+//            confidence = 98,
+//            advice = "Continue current care routine",
+////            time = "11:45 AM",
+//            imageRes = R.drawable.ic_alert,
+//            color = Color(0xFFE8F5E9)
+//        ),
+//        HistoryItem(
+//            plantName = "Cucumber Plant",
+//            status = true,
+//            disease = "Powdery Mildew",
+//            confidence = 87,
+//            advice = "Early stage - treatable",
+////            time = "9:22 AM",
+//            imageRes = R.drawable.ic_alert,
+//            color = Color(0xFFFFFDE7)
+//        )
+//    )
+//
+//    Column(
+//        modifier = Modifier
+//            .fillMaxSize()
+//            .background(Color(0xFFF8F9FA))
+//            .verticalScroll(rememberScrollState())
+//    ) {
 //        OutlinedTextField(
 //            value = "",
 //            onValueChange = {},
@@ -132,62 +170,92 @@ fun HistoryScreen(navController: NavController) {
 //                StatItem("85%", "Accuracy Rate", Color.White)
 //            }
 //        }
-
-        Spacer(Modifier.height(16.dp))
-        Text(
-            "Recent Activity",
-            modifier = Modifier.padding(start = 16.dp, bottom = 8.dp),
-            fontWeight = FontWeight.Bold,
-            color = Color.Black,
-            fontSize = 18.sp
-        )
-
-        Column(Modifier.padding(horizontal = 16.dp, vertical = 4.dp)) {
-            historyItems.forEach { item ->
-                HistoryCard(item)
-                Spacer(Modifier.height(12.dp))
-            }
-        }
-    }
-}
+//
+//        Spacer(Modifier.height(16.dp))
+//        Text(
+//            "Atividade Recente",
+//            modifier = Modifier.padding(start = 16.dp, bottom = 8.dp),
+//            fontWeight = FontWeight.Bold,
+//            color = Color.Black,
+//            fontSize = 18.sp
+//        )
+//
+//        if (historyItems.isEmpty()) {
+//            Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+//                Text("Nenhum diagnóstico salvo ainda.", color = Color.Gray)
+//            }
+//        } else {
+//            LazyColumn(
+//                contentPadding = PaddingValues(16.dp),
+//                verticalArrangement = Arrangement.spacedBy(12.dp)
+//            ) {
+//                items(historyItems) { item ->
+//                    HistoryCard(
+//                        item = item,
+//                        onClick = { onItemClick(item) }
+//                    )
+//                }
+//            }
+//        }
+//    }
+//}
 
 @Composable
-fun HistoryCard(item: HistoryItem) {
-    val (dotColor, statusColor) = when (item.status) {
-        true -> Color.Red to Color(0xFFFFEBEE)
-        false -> Color(0xFF4CAF50) to Color(0xFFE8F5E9)
+fun HistoryCard(item: DiagnosisHistory, onClick: () -> Unit) {
+    val isDiseased = item.diagnosisStatus != "Saudável"
+    val (dotColor, bgColor) = if (isDiseased) {
+        Color.Red to Color(0xFFFFEBEE)
+    } else {
+        Color(0xFF4CAF50) to Color(0xFFE8F5E9)
+    }
+    val advice = if (isDiseased) {
+        "Necessário tratamento"
+    } else {
+        "Nenhum tratamento necessário"
     }
 
     Card(
+        onClick = onClick,
         shape = RoundedCornerShape(16.dp),
         colors = CardDefaults.cardColors(containerColor = Color.White),
         elevation = CardDefaults.cardElevation(2.dp),
         modifier = Modifier.fillMaxWidth()
     ) {
-        Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.padding(8.dp)) {
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier
+                .padding(8.dp)
+                .height(IntrinsicSize.Min)
+        ) {
             Spacer(modifier = Modifier.width(8.dp))
-            Image(
-                painter = painterResource(R.drawable.imagemsoja),
+            AsyncImage(
+                model = Uri.parse(item.imageUri),
                 contentDescription = null,
+                placeholder = painterResource(R.drawable.imagemsoja),
                 modifier = Modifier
-                    .size(width = 80.dp, height = 140.dp)
-                    .clip(RoundedCornerShape(16.dp))
+                    .width(90.dp)
+                    .height(120.dp)
+                    .clip(RoundedCornerShape(12.dp))
+                    .background(Color.LightGray),
+                contentScale = ContentScale.Crop
             )
-            Column(Modifier.padding(12.dp)) {
+            Column(
+                Modifier
+                    .padding(12.dp)
+                    .weight(1f),
+                verticalArrangement = Arrangement.SpaceBetween
+            ) {
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.SpaceBetween,
                     modifier = Modifier.fillMaxWidth()
                 ) {
-                    Row(verticalAlignment = Alignment.CenterVertically) {
-                        Spacer(Modifier.width(8.dp))
-                        Text(
-                            text = item.plantName,
-                            fontSize = 16.sp,
-                            fontWeight = FontWeight.Bold,
-                            color = Color.Black
-                        )
-                    }
+                    Text(
+                        text = item.diseaseName,
+                        fontSize = 16.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = Color.Black
+                    )
 
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         Box(
@@ -196,7 +264,7 @@ fun HistoryCard(item: HistoryItem) {
                                 .background(dotColor, CircleShape)
                         )
                         Spacer(Modifier.width(4.dp))
-                        if (item.status) {
+                        if (isDiseased) {
                             Text("Diseased", color = dotColor, fontSize = 12.sp)
                         } else {
                             Text("Healthy", color = dotColor, fontSize = 12.sp)
@@ -209,27 +277,25 @@ fun HistoryCard(item: HistoryItem) {
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .background(item.color, RoundedCornerShape(12.dp))
-                        .padding(12.dp)
+                        .background(bgColor, RoundedCornerShape(12.dp))
+                        .padding(8.dp)
                 ) {
-                    Column(
-                        verticalArrangement = Arrangement.spacedBy(4.dp)
-                    ) {
+                    Column {
                         Text(
-                            text = item.disease,
+                            text = item.diseaseName,
                             fontSize = 14.sp,
                             fontWeight = FontWeight.Bold,
                             color = Color.Black
                         )
                         Text(
-                            "Confidence: ${item.confidence}%",
+                            "Nível de confiança: ${item.confidence}",
                             color = Color.Gray,
-                            fontSize = 14.sp
+                            fontSize = 12.sp
                         )
                         Text(
-                            item.advice,
+                            advice,
                             color = dotColor,
-                            fontSize = 14.sp
+                            fontSize = 12.sp
                         )
                     }
                 }
@@ -273,8 +339,25 @@ fun StatItem(value: String, label: String, color: Color) {
     }
 }
 
-@Preview(showBackground = true)
+@Preview
 @Composable
 fun HistoryScreenPreview() {
-    HistoryScreen(navController = rememberNavController())
+    val mockList = listOf(
+        DiagnosisHistory(
+            id = 1,
+            imageUri = "",
+            diseaseName = "Ferrugem",
+            diagnosisStatus = "Doente",
+            technicalId = "rust",
+            description = "Teste",
+            treatment = "Agua",
+            symptoms = listOf("Manchas"),
+            confidence = "99.29%"
+        )
+    )
+
+    HistoryScreen(
+        historyItems = mockList,
+        onItemClick = {}
+    )
 }

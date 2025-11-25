@@ -233,20 +233,11 @@ fun DiagnosisSuccessScreen(
             Text("Nível de confiança", color = Color.Gray, fontSize = 14.sp)
             Spacer(Modifier.height(4.dp))
 
-            val progressValue = remember(data.confidence) {
-                data.confidence
-                    .replace("%", "")
-                    .trim()
-                    .toFloatOrNull()
-                    ?.div(100f)
-                    ?: 0f
-            }
-
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Text(data.confidence, color = Color(0xFF2E7D32), fontWeight = FontWeight.Bold)
                 Spacer(Modifier.width(8.dp))
                 LinearProgressIndicator(
-                    progress = { progressValue },
+                    progress = { data.confidenceToFloat },
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(8.dp)

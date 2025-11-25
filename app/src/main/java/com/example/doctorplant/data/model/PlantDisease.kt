@@ -14,7 +14,15 @@ data class PlantDisease(
 
     @SerializedName("info")
     val information: DiseaseInformation
-)
+) {
+    val confidenceToFloat: Float get() =
+        confidence
+            .replace("%", "")
+            .trim()
+            .toFloatOrNull()
+            ?.div(100f)
+            ?: 0f
+}
 
 data class DiseaseInformation(
     @SerializedName("nome")

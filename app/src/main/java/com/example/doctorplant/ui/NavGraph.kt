@@ -14,9 +14,11 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
+import com.example.doctorplant.data.model.PlantDisease
 import com.example.doctorplant.ui.components.getRouteIndex
 import com.example.doctorplant.ui.diagnosis.CameraScreen
 import com.example.doctorplant.ui.diagnosis.DiagnosisScreen
+import com.example.doctorplant.ui.diagnosis.DiagnosisSuccessScreen
 import com.example.doctorplant.ui.diagnosis.DiagnosisViewModel
 import com.example.doctorplant.ui.history.HistoryScreen
 import com.example.doctorplant.ui.home.HomeScreen
@@ -24,7 +26,10 @@ import com.example.doctorplant.ui.landing.LandingScreen
 import com.example.doctorplant.ui.learnmore.LearnMoreScreen
 import com.example.doctorplant.ui.login.LoginScreen
 import com.example.doctorplant.ui.register.RegisterScreen
+import com.google.gson.Gson
 import org.koin.androidx.compose.koinViewModel
+import androidx.core.net.toUri
+import com.example.doctorplant.routes.HistoryRoute
 
 @Composable
 fun AppNavGraph(navController: NavHostController, modifier: Modifier = Modifier) {
@@ -59,13 +64,15 @@ fun AppNavGraph(navController: NavHostController, modifier: Modifier = Modifier)
         composable("home") { HomeScreen(navController) }
         composable("learn_more") { LearnMoreScreen() }
         composable("camera") { CameraScreen(navController) }
-        composable("history") { HistoryScreen(navController) }
+        composable("history") {
+            HistoryRoute(navController = navController)
+        }
         composable(
             route = "diagnosis/{imageUri}",
             arguments = listOf(navArgument("imageUri") { type = NavType.StringType })
         ) { backStackEntry ->
             val imageUriString = backStackEntry.arguments?.getString("imageUri")
-            val imageUri = Uri.parse(Uri.decode(imageUriString))
+            val imageUri = Uri.decode(imageUriString).toUri()
             val context = LocalContext.current
 
             val viewModel: DiagnosisViewModel = koinViewModel()
@@ -82,6 +89,26 @@ fun AppNavGraph(navController: NavHostController, modifier: Modifier = Modifier)
                 onBackClick = {
                     navController.popBackStack()
                 }
+            )
+        }
+        composable(
+            route = "diagnosis/{imageUri}/{plantData}",
+            arguments = listOf(
+                navArgument("imageUri") { type = NavType.StringType },
+                navArgument("plantData") { type = NavType.StringType }
+            )
+        ) { backStackEntry ->
+            val uriString = backStackEntry.arguments?.getString("imageUri") ?: ""
+            val jsonString = backStackEntry.arguments?.getString("plantData") ?: ""
+
+            val imageUri = uriString.toUri()
+            val plantDisease = Gson().fromJson(jsonString, PlantDisease::class.java)
+
+            DiagnosisSuccessScreen(
+                imageUri = imageUri,
+                data = plantDisease,
+                scanTime = "Histórico",
+                onBack = { navController.popBackStack() }
             )
         }
     }
