@@ -2,9 +2,12 @@ package com.example.doctorplant.ui.history
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.doctorplant.data.model.DiagnosisHistory
 import com.example.doctorplant.data.repository.DiagnosisRepository
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.launch
 
 class HistoryViewModel(private val repository: DiagnosisRepository) : ViewModel() {
     // Converte o Flow do banco para StateFlow para o Compose usar
@@ -14,4 +17,10 @@ class HistoryViewModel(private val repository: DiagnosisRepository) : ViewModel(
             started = SharingStarted.WhileSubscribed(5000),
             initialValue = emptyList()
         )
+
+    fun deleteItem(item: DiagnosisHistory) {
+        viewModelScope.launch(Dispatchers.IO) {
+            repository.deleteHistory(item)
+        }
+    }
 }

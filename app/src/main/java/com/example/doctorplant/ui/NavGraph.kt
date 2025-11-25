@@ -29,6 +29,8 @@ import com.example.doctorplant.ui.register.RegisterScreen
 import com.google.gson.Gson
 import org.koin.androidx.compose.koinViewModel
 import androidx.core.net.toUri
+import com.example.doctorplant.routes.DiagnosisRoute
+import com.example.doctorplant.routes.HistoryDiagnosisRoute
 import com.example.doctorplant.routes.HistoryRoute
 
 @Composable
@@ -59,8 +61,8 @@ fun AppNavGraph(navController: NavHostController, modifier: Modifier = Modifier)
         modifier = modifier
     ) {
         composable("landing") { LandingScreen(navController) }
-        composable("login") { LoginScreen(navController) }
-        composable("register") { RegisterScreen(navController) }
+//        composable("login") { LoginScreen(navController) }
+//        composable("register") { RegisterScreen(navController) }
         composable("home") { HomeScreen(navController) }
         composable("learn_more") { LearnMoreScreen() }
         composable("camera") { CameraScreen(navController) }
@@ -71,24 +73,9 @@ fun AppNavGraph(navController: NavHostController, modifier: Modifier = Modifier)
             route = "diagnosis/{imageUri}",
             arguments = listOf(navArgument("imageUri") { type = NavType.StringType })
         ) { backStackEntry ->
-            val imageUriString = backStackEntry.arguments?.getString("imageUri")
-            val imageUri = Uri.decode(imageUriString).toUri()
-            val context = LocalContext.current
-
-            val viewModel: DiagnosisViewModel = koinViewModel()
-
-            val uiState by viewModel.uiState.collectAsStateWithLifecycle()
-
-            LaunchedEffect(key1 = imageUri) {
-                viewModel.diagnosePlant(context, imageUri)
-            }
-
-            DiagnosisScreen(
-                imageUri = imageUri,
-                uiState = uiState,
-                onBackClick = {
-                    navController.popBackStack()
-                }
+            DiagnosisRoute(
+                navController = navController,
+                imageUriString = backStackEntry.arguments?.getString("imageUri")
             )
         }
         composable(
@@ -98,17 +85,10 @@ fun AppNavGraph(navController: NavHostController, modifier: Modifier = Modifier)
                 navArgument("plantData") { type = NavType.StringType }
             )
         ) { backStackEntry ->
-            val uriString = backStackEntry.arguments?.getString("imageUri") ?: ""
-            val jsonString = backStackEntry.arguments?.getString("plantData") ?: ""
-
-            val imageUri = uriString.toUri()
-            val plantDisease = Gson().fromJson(jsonString, PlantDisease::class.java)
-
-            DiagnosisSuccessScreen(
-                imageUri = imageUri,
-                data = plantDisease,
-                scanTime = "Histórico",
-                onBack = { navController.popBackStack() }
+            HistoryDiagnosisRoute(
+                navController = navController,
+                imageUriString = backStackEntry.arguments?.getString("imageUri"),
+                plantDataJson = backStackEntry.arguments?.getString("plantData")
             )
         }
     }

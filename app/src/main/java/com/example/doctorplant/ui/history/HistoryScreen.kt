@@ -47,7 +47,8 @@ import com.example.doctorplant.data.model.DiagnosisHistory
 @Composable
 fun HistoryScreen(
     historyItems: List<DiagnosisHistory>,
-    onItemClick: (DiagnosisHistory) -> Unit
+    onItemClick: (DiagnosisHistory) -> Unit,
+    onDeleteClick: (DiagnosisHistory) -> Unit
 ) {
     LazyColumn(
         modifier = Modifier
@@ -72,7 +73,8 @@ fun HistoryScreen(
             items(historyItems) { item ->
                 HistoryCard(
                     item = item,
-                    onClick = { onItemClick(item) }
+                    onClick = { onItemClick(item) },
+                    onDelete = { onDeleteClick(item) }
                 )
             }
         }
@@ -201,7 +203,11 @@ fun HistoryScreen(
 //}
 
 @Composable
-fun HistoryCard(item: DiagnosisHistory, onClick: () -> Unit) {
+fun HistoryCard(
+    item: DiagnosisHistory,
+    onClick: () -> Unit,
+    onDelete: () -> Unit
+) {
     val isDiseased = item.diagnosisStatus != "Saudável"
     val (dotColor, bgColor) = if (isDiseased) {
         Color.Red to Color(0xFFFFEBEE)
@@ -358,6 +364,7 @@ fun HistoryScreenPreview() {
 
     HistoryScreen(
         historyItems = mockList,
-        onItemClick = {}
+        onItemClick = {},
+        onDeleteClick = {}
     )
 }

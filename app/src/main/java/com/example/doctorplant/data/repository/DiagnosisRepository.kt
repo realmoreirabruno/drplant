@@ -36,5 +36,9 @@ class DiagnosisRepository(
         dao.insert(history)
     }
 
+    suspend fun deleteHistory(item: DiagnosisHistory) {
+        dao.delete(item)
+    }
+
     fun getAllHistory() = dao.getAll()
 }

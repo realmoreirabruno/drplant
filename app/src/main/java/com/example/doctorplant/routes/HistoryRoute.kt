@@ -21,6 +21,7 @@ fun HistoryRoute(
         historyItems = historyItems,
         onItemClick = { item ->
             navigateToDetails(navController, item)
-        }
+        },
+        onDeleteClick = { item -> viewModel.deleteItem(item) }
     )
 }
