@@ -59,7 +59,6 @@ fun HomeScreen(navController: NavController) {
         val galleryLauncher = rememberLauncherForActivityResult(
             contract = ActivityResultContracts.GetContent()
         ) { uri: Uri? ->
-            // O usuário pode cancelar a seleção (retornando null), por isso o 'let'
             uri?.let { selectedUri ->
                 val encodedUri = Uri.encode(selectedUri.toString())
                 navController.navigate("diagnosis/$encodedUri") {
@@ -109,7 +108,7 @@ fun HomeScreen(navController: NavController) {
                                 fontSize = 18.sp
                             )
                             Text(
-                                text = "Plant Health Expert",
+                                text = "Especialista em diagnóstico de plantas",
                                 color = Color.White.copy(alpha = 0.8f),
                                 fontSize = 13.sp
                             )
@@ -146,13 +145,13 @@ fun HomeScreen(navController: NavController) {
                 ) {
                     Column {
                         Text(
-                            text = "Welcome!",
+                            text = "Bem vindo!",
                             fontWeight = FontWeight.Bold,
                             fontSize = 18.sp,
                             color = Color.Black
                         )
                         Text(
-                            text = "Ready to diagnose your plants?",
+                            text = "Pronto para começar o diagnóstico?",
                             color = Color.Gray,
                             fontSize = 13.sp
                         )
@@ -182,7 +181,7 @@ fun HomeScreen(navController: NavController) {
         Spacer(modifier = Modifier.height(12.dp))
 
         Text(
-            text = "Scan Your Plant",
+            text = "Escaneie sua planta",
             style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
             textAlign = TextAlign.Center,
             modifier = Modifier.fillMaxWidth()
@@ -212,9 +211,9 @@ fun HomeScreen(navController: NavController) {
                     modifier = Modifier.size(40.dp)
                 )
                 Spacer(modifier = Modifier.height(8.dp))
-                Text("Tap above to capture", fontWeight = FontWeight.Bold, color = Color(0xFF2E7D32))
+                Text("Escolha uma das opções abaixo", fontWeight = FontWeight.Bold, color = Color(0xFF2E7D32))
                 Text(
-                    "or upload your picture from gallery",
+                    "para tirar uma foto ou fazer upload da imagem.",
                     color = Color.Gray,
                     fontSize = 13.sp
                 )
@@ -237,7 +236,7 @@ fun HomeScreen(navController: NavController) {
             ) {
                 Icon(painter = painterResource(R.drawable.ic_camera), contentDescription = null, tint = Color.White)
                 Spacer(modifier = Modifier.width(8.dp))
-                Text("Take Photo", color = Color.White)
+                Text("Tirar foto", color = Color.White)
             }
 
             OutlinedButton(
@@ -252,7 +251,7 @@ fun HomeScreen(navController: NavController) {
                     tint = Color(0xFF2E7D32)
                 )
                 Spacer(modifier = Modifier.width(8.dp))
-                Text("From Gallery", color = Color(0xFF2E7D32))
+                Text("Galeria", color = Color(0xFF2E7D32))
             }
         }
 
@@ -274,15 +273,15 @@ fun HomeScreen(navController: NavController) {
                     )
                     Spacer(modifier = Modifier.width(8.dp))
                     Text(
-                        "Quick Tips for Better Results",
+                        "Dicas rápidas para melhores resultados",
                         fontWeight = FontWeight.Bold,
                         color = Color(0xFF1565C0)
                     )
                 }
                 Spacer(modifier = Modifier.height(8.dp))
-                TipItem("Ensure good lighting")
-                TipItem("Focus on affected areas")
-                TipItem("Avoid entire plant photos")
+                TipItem("Garanta uma boa iluminação")
+                TipItem("Concentre-se nas áreas afetadas")
+                TipItem("Evite fotos da planta inteira")
             }
         }
     }

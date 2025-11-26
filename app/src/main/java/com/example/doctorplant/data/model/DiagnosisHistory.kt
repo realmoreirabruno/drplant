@@ -7,12 +7,12 @@ import androidx.room.PrimaryKey
 data class DiagnosisHistory(
     @PrimaryKey(autoGenerate = true) val id: Int = 0,
     val imageUri: String,
-    val diseaseName: String,     // info.nome
-    val diagnosisStatus: String, // info.diagnostico (Saudável/Doente)
-    val technicalId: String,     // info.id_tecnico
-    val description: String,     // info.descricao
-    val treatment: String,       // info.tratamento
-    val symptoms: List<String>,  // info.sintomas (Usa o Converter acima)
-    val confidence: String,      // Nivel de confiança
+    val diseaseName: String,
+    val diagnosisStatus: String,
+    val technicalId: String,
+    val description: String,
+    val treatment: String,
+    val symptoms: List<String>,
+    val confidence: String,
     val date: Long = System.currentTimeMillis()
 )

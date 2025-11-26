@@ -39,8 +39,8 @@ fun BottomNavBar(navController: NavHostController) {
 
     val items = listOf(
         BottomNavItem("home", "Home", painterResource(R.drawable.ic_house)),
-        BottomNavItem("camera", "Camera", painterResource(R.drawable.ic_camera)),
-        BottomNavItem("history", "History", painterResource(R.drawable.ic_history))
+        BottomNavItem("camera", "Câmera", painterResource(R.drawable.ic_camera)),
+        BottomNavItem("history", "Histórico", painterResource(R.drawable.ic_history))
     )
 
     NavigationBar(

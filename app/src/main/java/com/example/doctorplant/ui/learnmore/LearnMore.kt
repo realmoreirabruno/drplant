@@ -55,14 +55,14 @@ fun LearnMoreScreen() {
                 )
                 Spacer(modifier = Modifier.height(12.dp))
                 Text(
-                    text = "About Dr. Plant",
+                    text = "Sobre o Dr. Plant",
                     style = MaterialTheme.typography.headlineSmall.copy(
                         color = Color.White,
                         fontWeight = FontWeight.Bold
                     )
                 )
                 Text(
-                    text = "Advanced AI-powered plant disease recognition system developed by passionate researchers",
+                    text = "Sistema avançado de reconhecimento de doenças em plantas, baseado em IA, desenvolvido por pesquisadores apaixonados.",
                     color = Color.White.copy(alpha = 0.9f),
                     fontSize = 13.sp,
                     textAlign = TextAlign.Center,
@@ -88,7 +88,7 @@ fun LearnMoreScreen() {
                         )
                         Spacer(modifier = Modifier.width(8.dp))
                         Text(
-                            "Project Overview",
+                            "Visão geral do projeto",
                             fontWeight = FontWeight.Bold,
                             fontSize = 16.sp,
                             color = Color(0xFF2E7D32)
@@ -98,7 +98,7 @@ fun LearnMoreScreen() {
                     Spacer(modifier = Modifier.height(8.dp))
 
                     Text(
-                        text = "Dr. Plant is an innovative mobile application that uses artificial intelligence and machine learning to identify plant diseases from photographs. Our system can detect various plant ailments and provide treatment recommendations to help farmers and gardeners protect their crops.",
+                        text = "O Dr. Plant é um aplicativo móvel inovador que utiliza inteligência artificial e aprendizado de máquina para identificar doenças em plantas a partir de fotografias. Nosso sistema consegue detectar diversas doenças e fornecer recomendações de tratamento para ajudar agricultores e jardineiros a protegerem suas plantações.",
                         color = Color.Black.copy(alpha = 0.7f),
                         letterSpacing = 0.5.sp,
                         lineHeight = 18.sp,
@@ -115,33 +115,33 @@ fun LearnMoreScreen() {
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            SectionTitle("Development Team")
+            SectionTitle("Time de desenvolvimento")
             TeamMember(
                 name = "Bruno Moreira",
-                role = "Mobile Developer",
-                specialty = "Android App",
+                role = "Dev Mobile",
+                specialty = "Aplicativo Android",
                 specialtyColor = Color(0xFF2E7D32)
             )
             TeamMember(
                 name = "Victor Mariano Rocha",
-                role = "AI Developer",
-                specialty = "Segmentation and Machine Learning",
+                role = "Dev IA",
+                specialty = "Segmentação e Aprendizado de Máquina",
                 specialtyColor = Color(0xFF1565C0)
             )
             TeamMember(
                 name = "Julia Amadio",
-                role = "Backend Developer",
-                specialty = "API Integration and AI Tools",
+                role = "Dev Backend e IA",
+                specialty = "Integração de API e Ferramentas de IA",
                 specialtyColor = Color(0xFFD32F2F)
             )
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            SectionTitle("Academic Supervision")
+            SectionTitle("Supervisão Acadêmica")
             TeamMember(
                 name = "Prof. Pedronette",
-                role = "Supervising Professor",
-                specialty = "Computer Science Department",
+                role = "Professor Supervisor",
+                specialty = "DEMAC",
                 specialtyColor = Color(0xFF388E3C)
             )
 
@@ -173,7 +173,7 @@ fun LearnMoreScreen() {
                         }
                     }
                     Text(
-                        text = "This project is developed at the IGCE - UNESP Rio Claro campus, as part of our commitment to innovative research in agricultural technology.",
+                        text = "Este projeto está sendo desenvolvido no campus IGCE - UNESP Rio Claro, como parte do nosso compromisso com a pesquisa inovadora em tecnologia agrícola.",
                         style = MaterialTheme.typography.bodyMedium,
                         color = Color.Black,
                         fontSize = 12.sp,
@@ -191,7 +191,7 @@ fun LearnMoreScreen() {
 
             Spacer(modifier = Modifier.height(24.dp))
 
-            Text("Key Features", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
+            Text("Principais funcionalidades", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
 
             Row(
                 modifier = Modifier
@@ -200,15 +200,15 @@ fun LearnMoreScreen() {
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 FeatureItem(
-                    "Photo Analysis",
-                    "Instant disease detection",
+                    "Análise de Imagens",
+                    "Detecção de doença instantânea.",
                     R.drawable.ic_camera,
                     Color(0xFF4CAF50),
                     modifier = Modifier.weight(1f)
                 )
                 FeatureItem(
-                    "AI Powered",
-                    "Machine learning algorithms",
+                    "Feito com IA",
+                    "Algoritmos de aprendizado de máquina.",
                     R.drawable.ic_brain,
                     Color(0xFF2196F3),
                     modifier = Modifier.weight(1f)
@@ -222,14 +222,14 @@ fun LearnMoreScreen() {
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 FeatureItem(
-                    "Treatment Tips", "Expert recommendations",
+                    "Dicas de tratamento", "Recomendações de especialistas.",
                     R.drawable.ic_treatment,
                     Color(0xFFAB47BC),
                     modifier = Modifier.weight(1f)
                 )
                 FeatureItem(
-                    "History",
-                    "Track your plants",
+                    "Histórico",
+                    "Tenha autonomia para revisitar quando quiser.",
                     R.drawable.ic_history,
                     Color(0xFFFFA726),
                     modifier = Modifier.weight(1f)
@@ -245,9 +245,9 @@ fun LearnMoreScreen() {
                     .padding(20.dp)
             ) {
                 Column(horizontalAlignment = Alignment.Start) {
-                    Text("Get in Touch", color = Color.White, fontWeight = FontWeight.Bold)
+                    Text("Entre em contato", color = Color.White, fontWeight = FontWeight.Bold)
                     Text(
-                        "Questions about our research or collaboration opportunities?",
+                        "Tem alguma dúvida sobre nossas pesquisas ou oportunidades de colaboração?",
                         color = Color.LightGray,
                         modifier = Modifier.padding(vertical = 4.dp)
                     )

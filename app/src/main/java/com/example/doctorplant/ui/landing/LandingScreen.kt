@@ -83,15 +83,15 @@ fun LandingScreen(navController: NavController) {
             Spacer(modifier = Modifier.height(4.dp))
 
             Text(
-                text = "AI Plant Disease Expert",
+                text = "Especialista em diagnóstico de plantas",
                 style = Typography.bodyLarge
             )
 
             Spacer(modifier = Modifier.height(20.dp))
 
             Text(
-                text = "Instantly diagnose plant disease with\n advanced AI technology. " +
-                        "Keep your\n garden healthy and thriving",
+                text = "Diagnostique doenças de plantas instantaneamente com tecnologia avançada de IA. " +
+                        "Mantenha seu jardim saudável e próspero.",
                 style = Typography.bodyMedium,
                 textAlign = TextAlign.Center,
                 color = Dimmed
@@ -110,7 +110,7 @@ fun LandingScreen(navController: NavController) {
                     )
                     Spacer(modifier = Modifier.width(8.dp))
                     Text(
-                        text = "Instant\nScan",
+                        text = "Scan\nRápido",
                         style = Typography.labelSmall,
                         color = Dimmed,
                         textAlign = TextAlign.Center
@@ -127,7 +127,7 @@ fun LandingScreen(navController: NavController) {
                     )
                     Spacer(modifier = Modifier.width(8.dp))
                     Text(
-                        text = "AI\nPowered",
+                        text = "Feito com\nIA",
                         style = Typography.labelSmall,
                         color = Dimmed,
                         textAlign = TextAlign.Center
@@ -144,7 +144,7 @@ fun LandingScreen(navController: NavController) {
                     )
                     Spacer(modifier = Modifier.width(8.dp))
                     Text(
-                        text = "Track\nHealth",
+                        text = "Diagnóstico\nPersonalizado",
                         style = Typography.labelSmall,
                         color = Dimmed,
                         textAlign = TextAlign.Center
@@ -155,7 +155,7 @@ fun LandingScreen(navController: NavController) {
             Spacer(modifier = Modifier.height(40.dp))
 
             GenericButton(
-                text = "Get started",
+                text = "Comece aqui",
                 contentColor = GreenButton,
                 onClick = { navController.navigate("home")},
                 buttonLarge = true,
@@ -165,7 +165,7 @@ fun LandingScreen(navController: NavController) {
             Spacer(modifier = Modifier.height(8.dp))
 
             GenericOutlinedButton(
-                text = "Learn more",
+                text = "Saiba mais sobre o projeto",
                 onClick = { navController.navigate("learn_more") },
                 buttonLarge = true,
                 modifier = Modifier.fillMaxWidth()

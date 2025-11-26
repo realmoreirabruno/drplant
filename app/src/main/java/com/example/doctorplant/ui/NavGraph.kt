@@ -1,37 +1,22 @@
 package com.example.doctorplant.ui
 
-import android.net.Uri
 import androidx.compose.animation.AnimatedContentTransitionScope
 import androidx.compose.animation.core.tween
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
-import com.example.doctorplant.data.model.PlantDisease
-import com.example.doctorplant.ui.components.getRouteIndex
-import com.example.doctorplant.ui.diagnosis.CameraScreen
-import com.example.doctorplant.ui.diagnosis.DiagnosisScreen
-import com.example.doctorplant.ui.diagnosis.DiagnosisSuccessScreen
-import com.example.doctorplant.ui.diagnosis.DiagnosisViewModel
-import com.example.doctorplant.ui.history.HistoryScreen
-import com.example.doctorplant.ui.home.HomeScreen
-import com.example.doctorplant.ui.landing.LandingScreen
-import com.example.doctorplant.ui.learnmore.LearnMoreScreen
-import com.example.doctorplant.ui.login.LoginScreen
-import com.example.doctorplant.ui.register.RegisterScreen
-import com.google.gson.Gson
-import org.koin.androidx.compose.koinViewModel
-import androidx.core.net.toUri
 import com.example.doctorplant.routes.DiagnosisRoute
 import com.example.doctorplant.routes.HistoryDiagnosisRoute
 import com.example.doctorplant.routes.HistoryRoute
+import com.example.doctorplant.ui.components.getRouteIndex
+import com.example.doctorplant.ui.diagnosis.CameraScreen
+import com.example.doctorplant.ui.home.HomeScreen
+import com.example.doctorplant.ui.landing.LandingScreen
+import com.example.doctorplant.ui.learnmore.LearnMoreScreen
 
 @Composable
 fun AppNavGraph(navController: NavHostController, modifier: Modifier = Modifier) {

@@ -101,6 +101,7 @@ fun GenericButton(
             Text(
                 text = text,
                 style = typography.bodyMedium,
+                fontSize = 16.sp,
                 fontWeight = FontWeight.Bold,
                 textAlign = TextAlign.Center,
                 modifier = Modifier.padding(if (buttonLarge) 6.dp else 0.dp),
