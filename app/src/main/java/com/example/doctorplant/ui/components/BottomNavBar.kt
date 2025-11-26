@@ -57,8 +57,7 @@ fun BottomNavBar(navController: NavHostController) {
                 ) {
                     FloatingActionButton(
                         onClick = { navController.navigate("camera") },
-                        containerColor = GreenHome,
-                        elevation = FloatingActionButtonDefaults.elevation(8.dp)
+                        containerColor = GreenHome
                     ) {
                         Icon(
                             painter = item.icon,

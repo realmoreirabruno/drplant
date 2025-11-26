@@ -14,14 +14,13 @@ fun HistoryRoute(
     navController: NavController,
     viewModel: HistoryViewModel = koinViewModel()
 ) {
-    // Coleta o estado de forma segura para o ciclo de vida
     val historyItems by viewModel.historyList.collectAsStateWithLifecycle()
 
     HistoryScreen(
         historyItems = historyItems,
-        onItemClick = { item ->
-            navigateToDetails(navController, item)
-        },
-        onDeleteClick = { item -> viewModel.deleteItem(item) }
+        onItemClick = { item -> navigateToDetails(navController, item) },
+        onDeleteItems = { selectedList ->
+            viewModel.deleteItems(selectedList)
+        }
     )
 }

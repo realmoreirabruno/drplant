@@ -32,13 +32,13 @@ class DiagnosisRepository(
         }
     }
 
+    fun getAllHistory() = dao.getAll()
+
     suspend fun saveHistory(history: DiagnosisHistory) {
         dao.insert(history)
     }
 
-    suspend fun deleteHistory(item: DiagnosisHistory) {
-        dao.delete(item)
+    suspend fun deleteHistoryItems(items: List<DiagnosisHistory>) {
+        dao.deleteList(items)
     }
-
-    fun getAllHistory() = dao.getAll()
 }

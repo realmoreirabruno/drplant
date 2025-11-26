@@ -2,6 +2,7 @@ package com.example.doctorplant.ui.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -13,29 +14,28 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.doctorplant.ui.theme.GreenHome
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TopBar(
     title: String,
-    onBackClick: (() -> Unit)? = null
+    onNavigationClick: (() -> Unit)? = null,
+    navigationIcon: ImageVector? = Icons.Default.ArrowBack,
+    actions: @Composable RowScope.() -> Unit = {}
 ) {
     Spacer(modifier = Modifier.height(8.dp))
     Box(
         modifier = Modifier
             .fillMaxWidth()
             .height(70.dp)
-            .clip(
-                RoundedCornerShape(
-                    bottomStart = 24.dp,
-                    bottomEnd = 24.dp
-                )
-            )
-            .background(color = Color(0xFF4CAF50))
+            .clip(RoundedCornerShape(bottomStart = 24.dp, bottomEnd = 24.dp))
+            .background(color = GreenHome)
     ) {
         TopAppBar(
             title = {
@@ -47,19 +47,21 @@ fun TopBar(
                 )
             },
             navigationIcon = {
-                onBackClick?.let {
-                    IconButton(onClick = it) {
+                if (onNavigationClick != null && navigationIcon != null) {
+                    IconButton(onClick = onNavigationClick) {
                         Icon(
-                            imageVector = Icons.Default.ArrowBack,
-                            contentDescription = "Back",
+                            imageVector = navigationIcon,
+                            contentDescription = "Nav Icon",
                             tint = Color.White
                         )
                     }
                 }
             },
+            actions = actions,
             colors = TopAppBarDefaults.topAppBarColors(
-                Color(0xFF4CAF50),
-                Color(0xFF4CAF50)
+                containerColor = Color.Transparent,
+                titleContentColor = Color.White,
+                actionIconContentColor = Color.White
             ),
             modifier = Modifier.height(56.dp)
         )
@@ -72,8 +74,7 @@ fun TopBarPreview() {
     MaterialTheme {
         Box(modifier = Modifier.fillMaxWidth()) {
             TopBar(
-                title = "Dr. Plant",
-                onBackClick = {}
+                title = "Dr. Plant"
             )
         }
     }

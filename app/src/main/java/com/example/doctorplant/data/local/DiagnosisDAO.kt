@@ -17,5 +17,5 @@ interface DiagnosisDao {
     fun getAll(): Flow<List<DiagnosisHistory>>
 
     @Delete
-    suspend fun delete(diagnosis: DiagnosisHistory)
+    suspend fun deleteList(diagnosis: List<DiagnosisHistory>)
 }

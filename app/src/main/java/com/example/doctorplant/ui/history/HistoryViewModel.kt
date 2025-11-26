@@ -18,9 +18,9 @@ class HistoryViewModel(private val repository: DiagnosisRepository) : ViewModel(
             initialValue = emptyList()
         )
 
-    fun deleteItem(item: DiagnosisHistory) {
+    fun deleteItems(items: List<DiagnosisHistory>) {
         viewModelScope.launch(Dispatchers.IO) {
-            repository.deleteHistory(item)
+            repository.deleteHistoryItems(items)
         }
     }
 }

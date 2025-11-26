@@ -25,8 +25,7 @@ fun MainScreen() {
     )
 
     val topBarRoutes = listOf(
-        "diagnosis",
-        "history"
+        "diagnosis"
     )
 
     Scaffold(
@@ -35,10 +34,9 @@ fun MainScreen() {
                 TopBar(
                     title = when (currentRoute) {
                         "diagnosis" -> "Diagnosis"
-                        "history" -> "History"
                         else -> ""
                     },
-                    onBackClick = { navController.popBackStack() }
+                    onNavigationClick = { navController.popBackStack() }
                 )
             }
         },

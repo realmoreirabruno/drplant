@@ -3,6 +3,7 @@ package com.example.doctorplant.ui.history
 import android.net.Uri
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -21,15 +22,24 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.CheckCircle
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.DateRange
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -43,39 +53,128 @@ import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.example.doctorplant.R
 import com.example.doctorplant.data.model.DiagnosisHistory
+import com.example.doctorplant.ui.components.TopBar
+import com.example.doctorplant.ui.theme.GreenHome
 
 @Composable
 fun HistoryScreen(
     historyItems: List<DiagnosisHistory>,
     onItemClick: (DiagnosisHistory) -> Unit,
-    onDeleteClick: (DiagnosisHistory) -> Unit
+    onDeleteItems: (List<DiagnosisHistory>) -> Unit
 ) {
-    LazyColumn(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(Color(0xFFF8F9FA)),
-        contentPadding = PaddingValues(16.dp),
-        verticalArrangement = Arrangement.spacedBy(12.dp)
-    ) {
+    var selectedItems by remember { mutableStateOf(setOf<DiagnosisHistory>()) }
+    val isSelectionMode = selectedItems.isNotEmpty()
 
-        if (historyItems.isEmpty()) {
-            item {
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(200.dp),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Text("Nenhum diagnóstico salvo ainda.", color = Color.Gray)
-                }
-            }
+    fun toggleSelection(item: DiagnosisHistory) {
+        selectedItems = if (selectedItems.contains(item)) {
+            selectedItems - item
         } else {
-            items(historyItems) { item ->
-                HistoryCard(
-                    item = item,
-                    onClick = { onItemClick(item) },
-                    onDelete = { onDeleteClick(item) }
+            selectedItems + item
+        }
+    }
+
+    Scaffold(
+        topBar = {
+            if (isSelectionMode) {
+                TopBar(
+                    title = "${selectedItems.size} selecionado(s)",
+                    navigationIcon = Icons.Default.Close,
+                    onNavigationClick = { selectedItems = emptySet() },
+                    actions = {
+                        IconButton(onClick = {
+                            onDeleteItems(selectedItems.toList())
+                            selectedItems = emptySet()
+                        }) {
+                            Icon(Icons.Default.Delete, contentDescription = "Excluir")
+                        }
+                    }
                 )
+            } else {
+                TopBar(
+                    title = "Histórico",
+                    navigationIcon = null,
+                    onNavigationClick = null
+                )
+            }
+        }
+    ) { paddingValues ->
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(Color(0xFFF8F9FA))
+                .padding(paddingValues)
+        ) {
+            LazyColumn(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(Color(0xFFF8F9FA)),
+                contentPadding = PaddingValues(16.dp),
+                verticalArrangement = Arrangement.spacedBy(12.dp)
+            ) {
+                if (historyItems.isEmpty()) {
+                    item {
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(200.dp),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Text("Nenhum diagnóstico salvo ainda.", color = Color.Gray)
+                        }
+                    }
+                } else {
+                    item {
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(horizontal = 16.dp, vertical = 8.dp),
+                            horizontalArrangement = Arrangement.SpaceBetween
+                        ) {
+                            FilterButton("All Time", true)
+                            FilterButton("Today", false)
+                            FilterButton("This Week", false)
+                        }
+                    }
+
+                    item {
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .background(GreenHome)
+                                .padding(vertical = 24.dp)
+                        ) {
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.SpaceEvenly
+                            ) {
+                                StatItem("247", "Total Scans", Color.White)
+                                StatItem("38", "Diseases Found", Color.White)
+                                StatItem("85%", "Accuracy Rate", Color.White)
+                            }
+                        }
+                    }
+
+                    items(historyItems) { item ->
+                        val isSelected = selectedItems.contains(item)
+                        HistoryCard(
+                            item = item,
+                            isSelected = isSelected,
+                            onClick = {
+                                if (isSelectionMode) {
+                                    toggleSelection(item)
+                                } else {
+                                    onItemClick(item)
+                                }
+                            },
+                            onLongClick = {
+                                // Inicia a seleção ao segurar
+                                if (!isSelectionMode) {
+                                    toggleSelection(item)
+                                }
+                            }
+                        )
+                    }
+                }
             }
         }
     }
@@ -205,8 +304,9 @@ fun HistoryScreen(
 @Composable
 fun HistoryCard(
     item: DiagnosisHistory,
+    isSelected: Boolean,
     onClick: () -> Unit,
-    onDelete: () -> Unit
+    onLongClick: () -> Unit
 ) {
     val isDiseased = item.diagnosisStatus != "Saudável"
     val (dotColor, bgColor) = if (isDiseased) {
@@ -221,11 +321,14 @@ fun HistoryCard(
     }
 
     Card(
-        onClick = onClick,
         shape = RoundedCornerShape(16.dp),
         colors = CardDefaults.cardColors(containerColor = Color.White),
         elevation = CardDefaults.cardElevation(2.dp),
         modifier = Modifier.fillMaxWidth()
+            .combinedClickable(
+            onClick = onClick,
+            onLongClick = onLongClick
+        )
     ) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
@@ -305,6 +408,16 @@ fun HistoryCard(
                         )
                     }
                 }
+                if (isSelected) {
+                    Icon(
+                        imageVector = Icons.Default.CheckCircle,
+                        contentDescription = "Selecionado",
+                        tint = Color.Blue,
+                        modifier = Modifier
+                            .padding(8.dp)
+                            .background(Color.White, CircleShape)
+                    )
+                }
             }
         }
     }
@@ -315,7 +428,7 @@ fun FilterButton(text: String, selected: Boolean) {
     if (selected) {
         Button(
             onClick = {},
-            colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF2E7D32)),
+            colors = ButtonDefaults.buttonColors(containerColor = GreenHome),
             shape = RoundedCornerShape(50),
             contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp)
         ) {
@@ -365,6 +478,6 @@ fun HistoryScreenPreview() {
     HistoryScreen(
         historyItems = mockList,
         onItemClick = {},
-        onDeleteClick = {}
+        onDeleteItems = {}
     )
 }
