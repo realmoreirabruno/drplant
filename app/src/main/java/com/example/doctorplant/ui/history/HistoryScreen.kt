@@ -36,10 +36,6 @@ import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -56,67 +52,28 @@ import com.example.doctorplant.data.model.DiagnosisHistory
 import com.example.doctorplant.ui.components.TopBar
 import com.example.doctorplant.ui.theme.GreenHome
 import com.example.doctorplant.utils.TimeUtils
-import com.example.doctorplant.utils.TimeUtils.isThisWeek
-import com.example.doctorplant.utils.TimeUtils.isToday
 
+sealed interface HistoryEvent {
+    data class ChangeFilter(val filter: TimeUtils.HistoryFilter) : HistoryEvent
+    data class ToggleSelection(val item: DiagnosisHistory) : HistoryEvent
+    object ClearSelection : HistoryEvent
+    object DeleteSelected : HistoryEvent
+}
 @Composable
 fun HistoryScreen(
-    historyItems: List<DiagnosisHistory>,
+    state: HistoryState,
     onItemClick: (DiagnosisHistory) -> Unit,
-    onDeleteItems: (List<DiagnosisHistory>) -> Unit
+    onEvent: (HistoryEvent) -> Unit
 ) {
-    // 1. Estado do Filtro
-    var selectedFilter by remember { mutableStateOf(TimeUtils.HistoryFilter.ALL) }
-
-    // 2. Estado de Seleção (Multi-select para deletar)
-    var selectedItems by remember { mutableStateOf(setOf<DiagnosisHistory>()) }
-    val isSelectionMode = selectedItems.isNotEmpty()
-
-    val filteredList = remember(historyItems, selectedFilter) {
-        when (selectedFilter) {
-            TimeUtils.HistoryFilter.ALL -> historyItems
-            TimeUtils.HistoryFilter.TODAY -> historyItems.filter { isToday(it.date) }
-            TimeUtils.HistoryFilter.WEEK -> historyItems.filter { isThisWeek(it.date) }
-        }
-    }
-
-    val totalScans = historyItems.size
-    val totalDiseased = historyItems.count { it.diagnosisStatus != "Saudável" }
-
-    val accuracyRate = remember(historyItems) {
-        if (historyItems.isNotEmpty()) {
-            historyItems.map {
-                it.confidence
-                    .replace("%", "")
-                    .trim()
-                    .toFloatOrNull()
-                    ?: 0f
-            }.average().toInt()
-        } else {
-            0
-        }
-    }
-
-    fun toggleSelection(item: DiagnosisHistory) {
-        selectedItems = if (selectedItems.contains(item)) {
-            selectedItems - item
-        } else {
-            selectedItems + item
-        }
-    }
-
     Scaffold(
         topBar = {
-            if (isSelectionMode) {
+            if (state.isSelectionMode) {
                 TopBar(
-                    title = "${selectedItems.size} selecionado(s)",
+                    title = "${state.selectedItems.size} selecionado(s)",
                     navigationIcon = Icons.Default.Close,
-                    onNavigationClick = { selectedItems = emptySet() },
+                    onNavigationClick = { onEvent(HistoryEvent.ClearSelection) },
                     actions = {
-                        IconButton(onClick = {
-                            onDeleteItems(selectedItems.toList())
-                            selectedItems = emptySet()
-                        }) {
+                        IconButton(onClick = { onEvent(HistoryEvent.DeleteSelected) }) {
                             Icon(Icons.Default.Delete, contentDescription = "Excluir")
                         }
                     }
@@ -152,18 +109,18 @@ fun HistoryScreen(
                     ) {
                         FilterButton(
                             text = "Tudo",
-                            selected = selectedFilter == TimeUtils.HistoryFilter.ALL,
-                            onClick = { selectedFilter = TimeUtils.HistoryFilter.ALL }
+                            selected = state.selectedFilter == TimeUtils.HistoryFilter.ALL,
+                            onClick = { onEvent(HistoryEvent.ChangeFilter(TimeUtils.HistoryFilter.ALL)) }
                         )
                         FilterButton(
                             text = "Hoje",
-                            selected = selectedFilter == TimeUtils.HistoryFilter.TODAY,
-                            onClick = { selectedFilter = TimeUtils.HistoryFilter.TODAY }
+                            selected = state.selectedFilter == TimeUtils.HistoryFilter.TODAY,
+                            onClick = { onEvent(HistoryEvent.ChangeFilter(TimeUtils.HistoryFilter.TODAY)) }
                         )
                         FilterButton(
                             text = "Essa semana",
-                            selected = selectedFilter == TimeUtils.HistoryFilter.WEEK,
-                            onClick = { selectedFilter = TimeUtils.HistoryFilter.WEEK }
+                            selected = state.selectedFilter == TimeUtils.HistoryFilter.WEEK,
+                            onClick = { onEvent(HistoryEvent.ChangeFilter(TimeUtils.HistoryFilter.WEEK)) }
                         )
                     }
                 }
@@ -179,14 +136,14 @@ fun HistoryScreen(
                             modifier = Modifier.fillMaxWidth(),
                             horizontalArrangement = Arrangement.SpaceEvenly
                         ) {
-                            StatItem(value = totalScans.toString(), label = "Total de diagnósticos", color = Color.White)
-                            StatItem(value = totalDiseased.toString(), label = "Plantas doentes", color = Color.White)
-                            StatItem(value = "$accuracyRate%", label = "Acurácia Média", color = Color.White)
+                            StatItem(value = state.totalScans.toString(), label = "Total de diagnósticos", color = Color.White)
+                            StatItem(value = state.totalDiseased.toString(), label = "Plantas doentes", color = Color.White)
+                            StatItem(value = "${state.accuracyRate}%", label = "Acurácia Média", color = Color.White)
                         }
                     }
                 }
 
-                if (filteredList.isEmpty()) {
+                if (state.historyItems.isEmpty()) {
                     item {
                         Box(
                             modifier = Modifier
@@ -198,24 +155,25 @@ fun HistoryScreen(
                         }
                     }
                 } else {
-                    items(filteredList) { item ->
-                        val isSelected = selectedItems.contains(item)
+                    items(state.historyItems) { item ->
+                        val isSelected = state.selectedItems.contains(item)
+
                         HistoryCard(
                             item = item,
                             isSelected = isSelected,
+                            modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp),
                             onClick = {
-                                if (isSelectionMode) {
-                                    toggleSelection(item)
+                                if (state.isSelectionMode) {
+                                    onEvent(HistoryEvent.ToggleSelection(item))
                                 } else {
                                     onItemClick(item)
                                 }
                             },
                             onLongClick = {
-                                if (!isSelectionMode) {
-                                    toggleSelection(item)
+                                if (!state.isSelectionMode) {
+                                    onEvent(HistoryEvent.ToggleSelection(item))
                                 }
-                            },
-                            modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp)
+                            }
                         )
                     }
                 }
@@ -389,23 +347,9 @@ fun StatItem(value: String, label: String, color: Color) {
 @Preview
 @Composable
 fun HistoryScreenPreview() {
-    val mockList = listOf(
-        DiagnosisHistory(
-            id = 1,
-            imageUri = "",
-            diseaseName = "Ferrugem",
-            diagnosisStatus = "Doente",
-            technicalId = "rust",
-            description = "Teste",
-            treatment = "Agua",
-            symptoms = listOf("Manchas"),
-            confidence = "99.29%"
-        )
-    )
-
     HistoryScreen(
-        historyItems = mockList,
+        state = HistoryState(),
         onItemClick = {},
-        onDeleteItems = {}
+        onEvent = {}
     )
 }

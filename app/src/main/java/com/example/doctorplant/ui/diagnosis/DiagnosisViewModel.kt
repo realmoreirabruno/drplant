@@ -7,6 +7,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.doctorplant.data.model.DiagnosisHistory
 import com.example.doctorplant.data.model.PlantDisease
 import com.example.doctorplant.data.repository.DiagnosisRepository
+import com.example.doctorplant.utils.TimeUtils
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -17,20 +18,24 @@ import java.io.File
 sealed class DiagnosisUiState {
     object Idle : DiagnosisUiState()
     object Loading : DiagnosisUiState()
-    data class Success(val data: PlantDisease) : DiagnosisUiState()
+    data class Success(
+        val data: PlantDisease,
+        val scanTime: String
+    ) : DiagnosisUiState()
     data class Error(val message: String) : DiagnosisUiState()
 }
-
 
 class DiagnosisViewModel(
     private val repository: DiagnosisRepository
 ) : ViewModel() {
     private val _uiState = MutableStateFlow<DiagnosisUiState>(DiagnosisUiState.Idle)
-
     val uiState = _uiState.asStateFlow()
 
     fun diagnosePlant(context: Context, imageUri: Uri) {
         _uiState.value = DiagnosisUiState.Loading
+
+        // 1. Marca o tempo de início
+        val startTime = System.currentTimeMillis()
 
         viewModelScope.launch {
             val newState = withContext(Dispatchers.IO) {
@@ -40,7 +45,12 @@ class DiagnosisViewModel(
 
                     if (result != null) {
                         saveToHistory(imageUri, result)
-                        DiagnosisUiState.Success(result)
+
+                        val endTime = System.currentTimeMillis()
+                        val diff = endTime - startTime
+                        val formattedTime = TimeUtils.customFormatDuration(diff)
+
+                        DiagnosisUiState.Success(result, formattedTime)
                     } else {
                         DiagnosisUiState.Error("Erro no diagnóstico")
                     }

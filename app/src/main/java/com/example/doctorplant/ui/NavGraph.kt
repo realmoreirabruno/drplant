@@ -86,7 +86,6 @@ fun AppNavGraph(navController: NavHostController, modifier: Modifier = Modifier)
             )
         ) { backStackEntry ->
             HistoryDiagnosisRoute(
-                navController = navController,
                 imageUriString = backStackEntry.arguments?.getString("imageUri"),
                 plantDataJson = backStackEntry.arguments?.getString("plantData")
             )

@@ -32,13 +32,6 @@ import androidx.compose.material3.ProgressIndicatorDefaults
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableLongStateOf
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -54,7 +47,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.example.doctorplant.R
-import com.example.doctorplant.utils.TimeUtils.customFormatDuration
 import com.example.doctorplant.data.model.DiseaseInformation
 import com.example.doctorplant.data.model.PlantDisease
 import com.example.doctorplant.ui.theme.DoctorPlantTheme
@@ -66,28 +58,6 @@ fun DiagnosisScreen(
     uiState: DiagnosisUiState,
     onBackClick: () -> Unit
 ) {
-    var startTime by rememberSaveable { mutableLongStateOf(0L) }
-    var scanDuration by rememberSaveable { mutableStateOf("") }
-
-    LaunchedEffect(uiState) {
-        when (uiState) {
-            is DiagnosisUiState.Loading -> {
-                startTime = System.currentTimeMillis()
-            }
-
-            is DiagnosisUiState.Success -> {
-                if (startTime != 0L) {
-                    val endTime = System.currentTimeMillis()
-                    val diff = endTime - startTime
-
-                    scanDuration = customFormatDuration(diff)
-                }
-            }
-
-            else -> {}
-        }
-    }
-
     when (uiState) {
         DiagnosisUiState.Idle,
         DiagnosisUiState.Loading -> {
@@ -124,10 +94,26 @@ fun DiagnosisScreen(
             DiagnosisSuccessScreen(
                 imageUri = imageUri,
                 data = uiState.data,
-                scanTime = scanDuration,
-                onBack = onBackClick
+                scanTime = uiState.scanTime,
             )
         }
+    }
+}
+
+@Composable
+fun StatusChip(
+    label: String,
+    color: Color,
+    horizontalPadding: Dp = 14.dp,
+    verticalPadding: Dp = 8.dp,
+    roundedLevel: Dp = 12.dp
+) {
+    Box(
+        modifier = Modifier
+            .background(color.copy(alpha = 0.1f), RoundedCornerShape(roundedLevel))
+            .padding(horizontal = horizontalPadding, vertical = verticalPadding)
+    ) {
+        Text(label, color = color, fontWeight = FontWeight.Medium)
     }
 }
 
@@ -136,7 +122,6 @@ fun DiagnosisSuccessScreen(
     imageUri: Uri,
     data: PlantDisease,
     scanTime: String,
-    onBack: () -> Unit
 ) {
     Column(
         modifier = Modifier
@@ -349,23 +334,6 @@ fun DiagnosisSuccessScreen(
 }
 
 @Composable
-fun StatusChip(
-    label: String,
-    color: Color,
-    horizontalPadding: Dp = 14.dp,
-    verticalPadding: Dp = 8.dp,
-    roundedLevel: Dp = 12.dp
-) {
-    Box(
-        modifier = Modifier
-            .background(color.copy(alpha = 0.1f), RoundedCornerShape(roundedLevel))
-            .padding(horizontal = horizontalPadding, vertical = verticalPadding)
-    ) {
-        Text(label, color = color, fontWeight = FontWeight.Medium)
-    }
-}
-
-@Composable
 fun debugPlaceholder(debugPreviewImage: Int): Painter? {
     if (LocalInspectionMode.current) {
         return painterResource(id = debugPreviewImage)
@@ -395,7 +363,8 @@ fun DiagnosisResultPreview() {
                         ),
                         treatment = "Remover as folhas infectadas imediatamente e aplicar fungicida à base de cobre."
                     )
-                )
+                ),
+                scanTime = "10s"
             )
         ) {}
     }
