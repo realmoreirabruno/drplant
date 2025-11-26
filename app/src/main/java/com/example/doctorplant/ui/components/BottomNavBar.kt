@@ -14,7 +14,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import com.example.doctorplant.ui.theme.BeutifulGreen
+import com.example.doctorplant.ui.theme.BeautifulGreen
 import com.example.doctorplant.ui.theme.DoctorPlantTheme
 
 data class BottomNavItem(
@@ -57,7 +57,7 @@ fun BottomNavBar(navController: NavHostController) {
                 ) {
                     FloatingActionButton(
                         onClick = { navController.navigate("camera") },
-                        containerColor = BeutifulGreen
+                        containerColor = BeautifulGreen
                     ) {
                         Icon(
                             painter = item.icon,
@@ -88,8 +88,8 @@ fun BottomNavBar(navController: NavHostController) {
                     },
                     label = { Text(item.label, color = Color(0xFF000000)) },
                     colors = NavigationBarItemDefaults.colors(
-                        selectedIconColor = BeutifulGreen,
-                        selectedTextColor = BeutifulGreen,
+                        selectedIconColor = BeautifulGreen,
+                        selectedTextColor = BeautifulGreen,
                         indicatorColor = Color.Transparent
                     )
                 )

@@ -1,7 +1,14 @@
 package com.example.doctorplant.ui.history
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.animateContentSize
+import androidx.compose.animation.expandHorizontally
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.shrinkHorizontally
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -25,6 +32,7 @@ import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.outlined.Circle
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
@@ -50,7 +58,7 @@ import coil.compose.AsyncImage
 import com.example.doctorplant.R
 import com.example.doctorplant.data.model.DiagnosisHistory
 import com.example.doctorplant.ui.components.TopBar
-import com.example.doctorplant.ui.theme.BeutifulGreen
+import com.example.doctorplant.ui.theme.BeautifulGreen
 import com.example.doctorplant.utils.TimeUtils
 
 sealed interface HistoryEvent {
@@ -100,48 +108,11 @@ fun HistoryScreen(
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 item {
-                    Spacer(modifier = Modifier.height(8.dp))
-
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(horizontal = 16.dp, vertical = 4.dp),
-                        horizontalArrangement = Arrangement.SpaceBetween
-                    ) {
-                        FilterButton(
-                            text = "Tudo",
-                            selected = state.selectedFilter == TimeUtils.HistoryFilter.ALL,
-                            onClick = { onEvent(HistoryEvent.ChangeFilter(TimeUtils.HistoryFilter.ALL)) }
-                        )
-                        FilterButton(
-                            text = "Hoje",
-                            selected = state.selectedFilter == TimeUtils.HistoryFilter.TODAY,
-                            onClick = { onEvent(HistoryEvent.ChangeFilter(TimeUtils.HistoryFilter.TODAY)) }
-                        )
-                        FilterButton(
-                            text = "Essa semana",
-                            selected = state.selectedFilter == TimeUtils.HistoryFilter.WEEK,
-                            onClick = { onEvent(HistoryEvent.ChangeFilter(TimeUtils.HistoryFilter.WEEK)) }
-                        )
-                    }
+                    Filters(state, onEvent)
                 }
 
                 item {
-                    Box(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .background(BeutifulGreen)
-                            .padding(vertical = 18.dp)
-                    ) {
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.SpaceEvenly
-                        ) {
-                            StatItem(value = state.totalScans.toString(), label = "Total de diagnósticos", color = Color.White)
-                            StatItem(value = state.totalDiseased.toString(), label = "Plantas doentes", color = Color.White)
-                            StatItem(value = "${state.accuracyRate}%", label = "Acurácia Média", color = Color.White)
-                        }
-                    }
+                    Statistics(state)
                 }
 
                 if (state.historyItems.isEmpty()) {
@@ -159,26 +130,103 @@ fun HistoryScreen(
                     items(state.historyItems) { item ->
                         val isSelected = state.selectedItems.contains(item)
 
-                        HistoryCard(
-                            item = item,
-                            isSelected = isSelected,
-                            modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp),
-                            onClick = {
-                                if (state.isSelectionMode) {
-                                    onEvent(HistoryEvent.ToggleSelection(item))
-                                } else {
-                                    onItemClick(item)
-                                }
-                            },
-                            onLongClick = {
-                                if (!state.isSelectionMode) {
-                                    onEvent(HistoryEvent.ToggleSelection(item))
-                                }
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(horizontal = 16.dp, vertical = 4.dp)
+                                .animateContentSize()
+                        ) {
+                            AnimatedVisibility(
+                                visible = state.isSelectionMode,
+                                enter = expandHorizontally() + fadeIn(),
+                                exit = shrinkHorizontally() + fadeOut()
+                            ) {
+                                Icon(
+                                    imageVector = if (isSelected) Icons.Default.CheckCircle else Icons.Outlined.Circle,
+                                    contentDescription = "Selecionar",
+                                    tint = if (isSelected) BeautifulGreen else Color.Gray,
+                                    modifier = Modifier
+                                        .padding(end = 8.dp)
+                                        .size(24.dp)
+                                        .clip(CircleShape)
+                                        .clickable { onEvent(HistoryEvent.ToggleSelection(item)) }
+                                )
                             }
-                        )
+
+                            HistoryCard(
+                                item = item,
+                                isSelected = isSelected,
+                                modifier = Modifier
+                                    .weight(1f)
+                                    .padding(4.dp),
+                                onClick = {
+                                    if (state.isSelectionMode) {
+                                        onEvent(HistoryEvent.ToggleSelection(item))
+                                    } else {
+                                        onItemClick(item)
+                                    }
+                                },
+                                onLongClick = {
+                                    if (!state.isSelectionMode) {
+                                        onEvent(HistoryEvent.ToggleSelection(item))
+                                    }
+                                }
+                            )
+                        }
                     }
                 }
             }
+        }
+    }
+}
+
+@Composable
+fun Filters(
+    state: HistoryState,
+    onEvent: (HistoryEvent) -> Unit
+) {
+    Spacer(modifier = Modifier.height(8.dp))
+
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 16.dp, vertical = 4.dp),
+        horizontalArrangement = Arrangement.SpaceBetween
+    ) {
+        FilterButton(
+            text = "Tudo",
+            selected = state.selectedFilter == TimeUtils.HistoryFilter.ALL,
+            onClick = { onEvent(HistoryEvent.ChangeFilter(TimeUtils.HistoryFilter.ALL)) }
+        )
+        FilterButton(
+            text = "Hoje",
+            selected = state.selectedFilter == TimeUtils.HistoryFilter.TODAY,
+            onClick = { onEvent(HistoryEvent.ChangeFilter(TimeUtils.HistoryFilter.TODAY)) }
+        )
+        FilterButton(
+            text = "Essa semana",
+            selected = state.selectedFilter == TimeUtils.HistoryFilter.WEEK,
+            onClick = { onEvent(HistoryEvent.ChangeFilter(TimeUtils.HistoryFilter.WEEK)) }
+        )
+    }
+}
+
+@Composable
+fun Statistics(state: HistoryState) {
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .background(BeautifulGreen)
+            .padding(vertical = 18.dp)
+    ) {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceEvenly
+        ) {
+            StatItem(value = state.totalScans.toString(), label = "Total de diagnósticos", color = Color.White)
+            StatItem(value = state.totalDiseased.toString(), label = "Plantas doentes", color = Color.White)
+            StatItem(value = "${state.accuracyRate}%", label = "Acurácia Média", color = Color.White)
         }
     }
 }
@@ -189,24 +237,28 @@ fun HistoryCard(
     isSelected: Boolean,
     onClick: () -> Unit,
     onLongClick: () -> Unit,
-    modifier: Modifier
+    modifier: Modifier = Modifier
 ) {
     val isDiseased = item.diagnosisStatus != "Saudável"
+
     val (dotColor, bgColor) = if (isDiseased) {
         Color.Red to Color(0xFFFFEBEE)
     } else {
         Color(0xFF4CAF50) to Color(0xFFE8F5E9)
     }
+
     val advice = if (isDiseased) {
         "Necessita de tratamento"
     } else {
         "Nenhum tratamento necessário"
     }
 
+    val cardContainerColor = if (isSelected) Color(0xFFC8E6C9) else Color.White
+
     Card(
         shape = RoundedCornerShape(16.dp),
-        colors = CardDefaults.cardColors(containerColor = Color.White),
-        elevation = CardDefaults.cardElevation(2.dp),
+        colors = CardDefaults.cardColors(containerColor = cardContainerColor),
+        elevation = CardDefaults.cardElevation(if (isSelected) 0.dp else 2.dp),
         modifier = modifier.fillMaxWidth()
             .combinedClickable(
             onClick = onClick,
@@ -219,7 +271,9 @@ fun HistoryCard(
                 .padding(8.dp)
                 .height(IntrinsicSize.Min)
         ) {
+
             Spacer(modifier = Modifier.width(8.dp))
+
             AsyncImage(
                 model = item.imageUri.toUri(),
                 contentDescription = null,
@@ -291,16 +345,6 @@ fun HistoryCard(
                         )
                     }
                 }
-                if (isSelected) {
-                    Icon(
-                        imageVector = Icons.Default.CheckCircle,
-                        contentDescription = "Selecionado",
-                        tint = Color.Blue,
-                        modifier = Modifier
-                            .padding(8.dp)
-                            .background(Color.White, CircleShape)
-                    )
-                }
             }
         }
     }
@@ -315,7 +359,7 @@ fun FilterButton(
     if (selected) {
         Button(
             onClick = onClick,
-            colors = ButtonDefaults.buttonColors(containerColor = BeutifulGreen),
+            colors = ButtonDefaults.buttonColors(containerColor = BeautifulGreen),
             shape = RoundedCornerShape(50),
             contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp)
         ) {

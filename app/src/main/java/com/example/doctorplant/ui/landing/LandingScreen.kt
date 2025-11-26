@@ -31,14 +31,14 @@ import androidx.navigation.compose.rememberNavController
 import com.example.doctorplant.R
 import com.example.doctorplant.ui.components.GenericButton
 import com.example.doctorplant.ui.components.GenericOutlinedButton
-import com.example.doctorplant.ui.theme.BeutifulGreen
+import com.example.doctorplant.ui.theme.BeautifulGreen
 import com.example.doctorplant.ui.theme.Dimmed
 import com.example.doctorplant.ui.theme.Typography
 
 @Composable
 fun LandingScreen(navController: NavController) {
     Box(
-        modifier = Modifier.background(BeutifulGreen)
+        modifier = Modifier.background(BeautifulGreen)
     ) {
         Column(
             modifier = Modifier
@@ -53,7 +53,7 @@ fun LandingScreen(navController: NavController) {
                 contentAlignment = Alignment.Center,
                 modifier = Modifier
                     .background(
-                        color = BeutifulGreen,
+                        color = BeautifulGreen,
                         shape = CircleShape
                     )
                     .size(80.dp)
@@ -153,7 +153,7 @@ fun LandingScreen(navController: NavController) {
 
             GenericButton(
                 text = "Comece aqui",
-                contentColor = BeutifulGreen,
+                contentColor = BeautifulGreen,
                 onClick = { navController.navigate("home")},
                 buttonLarge = true,
                 modifier = Modifier.fillMaxWidth()

@@ -77,9 +77,6 @@ class HistoryViewModel(private val repository: DiagnosisRepository) : ViewModel(
         if (itemsToDelete.isNotEmpty()) {
             viewModelScope.launch(Dispatchers.IO) {
                 repository.deleteHistoryItems(itemsToDelete)
-                // O Room vai emitir a nova lista automaticamente,
-                // e o combine vai recalcular o UI State.
-                // Só precisamos limpar a seleção visual:
                 _selectedItems.value = emptySet()
             }
         }

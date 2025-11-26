@@ -36,7 +36,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
@@ -47,7 +46,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.doctorplant.R
-import com.example.doctorplant.ui.theme.BeutifulGreen
+import com.example.doctorplant.ui.theme.BeautifulGreen
 
 @Composable
 fun HomeScreen(navController: NavController) {
@@ -77,7 +76,7 @@ fun HomeScreen(navController: NavController) {
             modifier = Modifier
                 .fillMaxWidth()
                 .background(
-                    color = BeutifulGreen,
+                    color = BeautifulGreen,
                     shape = RoundedCornerShape(bottomStart = 20.dp, bottomEnd = 20.dp)
                 )
                 .padding(horizontal = 16.dp, vertical = 20.dp)
@@ -192,7 +191,7 @@ fun HomeScreen(navController: NavController) {
                 Icon(
                     painter = painterResource(R.drawable.ic_camera),
                     contentDescription = "Capture",
-                    tint = BeutifulGreen,
+                    tint = BeautifulGreen,
                     modifier = Modifier.size(40.dp)
                 )
                 Spacer(modifier = Modifier.height(8.dp))
@@ -216,7 +215,7 @@ fun HomeScreen(navController: NavController) {
             Button(
                 onClick = { navController.navigate("camera") },
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = BeutifulGreen
+                    containerColor = BeautifulGreen
                 ),
                 shape = RoundedCornerShape(12.dp),
                 modifier = Modifier.weight(1f)

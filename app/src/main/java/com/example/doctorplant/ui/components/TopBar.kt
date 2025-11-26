@@ -24,7 +24,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.doctorplant.ui.theme.BeutifulGreen
+import com.example.doctorplant.ui.theme.BeautifulGreen
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -40,7 +40,7 @@ fun TopBar(
             .fillMaxWidth()
             .height(70.dp)
             .background(
-                color = BeutifulGreen,
+                color = BeautifulGreen,
                 shape = RoundedCornerShape(bottomStart = 20.dp, bottomEnd = 20.dp)
             )
     ) {
