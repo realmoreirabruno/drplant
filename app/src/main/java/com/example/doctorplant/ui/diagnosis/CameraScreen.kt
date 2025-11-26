@@ -54,7 +54,7 @@ import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import com.example.doctorplant.R
-import com.example.doctorplant.ui.theme.GreenHome
+import com.example.doctorplant.ui.theme.BeutifulGreen
 import java.io.File
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
@@ -182,7 +182,7 @@ private fun CameraContent(
                 .size(72.dp)
                 .background(Color.White, CircleShape)
         ) {
-            Icon(painterResource(R.drawable.ic_camera), tint = GreenHome, contentDescription = "Capturar foto")
+            Icon(painterResource(R.drawable.ic_camera), tint = BeutifulGreen, contentDescription = "Capturar foto")
         }
 
         // Preview da imagem tirada
@@ -205,12 +205,12 @@ private fun CameraContent(
                     OutlinedButton(
                         onClick = { imageUri = null },
                         shape = RoundedCornerShape(12.dp),
-                        border = BorderStroke(2.dp, GreenHome),
+                        border = BorderStroke(2.dp, BeutifulGreen),
                         modifier = Modifier.height(54.dp)
                     ) {
                         Text(
                             text = "Tirar outra",
-                            color = GreenHome,
+                            color = BeutifulGreen,
                             fontSize = 16.sp,
                             fontWeight = FontWeight.Medium
                         )
@@ -226,7 +226,7 @@ private fun CameraContent(
                         },
                         shape = RoundedCornerShape(12.dp),
                         colors = ButtonDefaults.buttonColors(
-                            containerColor = GreenHome,
+                            containerColor = BeutifulGreen,
                             contentColor = Color.White
                         ),
                         modifier = Modifier.height(54.dp)

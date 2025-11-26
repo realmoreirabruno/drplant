@@ -49,8 +49,8 @@ import coil.compose.AsyncImage
 import com.example.doctorplant.R
 import com.example.doctorplant.data.model.DiseaseInformation
 import com.example.doctorplant.data.model.PlantDisease
+import com.example.doctorplant.ui.theme.BeutifulGreen
 import com.example.doctorplant.ui.theme.DoctorPlantTheme
-import com.example.doctorplant.ui.theme.GreenHome
 
 @Composable
 fun DiagnosisScreen(
@@ -80,7 +80,7 @@ fun DiagnosisScreen(
                     onClick = onBackClick,
                     shape = RoundedCornerShape(12.dp),
                     colors = ButtonDefaults.buttonColors(
-                        containerColor = GreenHome,
+                        containerColor = BeutifulGreen,
                         contentColor = Color.White
                     ),
                     modifier = Modifier.height(54.dp)

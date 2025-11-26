@@ -1,6 +1,5 @@
 package com.example.doctorplant.ui.history
 
-import android.net.Uri
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.combinedClickable
@@ -46,11 +45,12 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.net.toUri
 import coil.compose.AsyncImage
 import com.example.doctorplant.R
 import com.example.doctorplant.data.model.DiagnosisHistory
 import com.example.doctorplant.ui.components.TopBar
-import com.example.doctorplant.ui.theme.GreenHome
+import com.example.doctorplant.ui.theme.BeutifulGreen
 import com.example.doctorplant.utils.TimeUtils
 
 sealed interface HistoryEvent {
@@ -96,11 +96,12 @@ fun HistoryScreen(
             LazyColumn(
                 modifier = Modifier
                     .fillMaxSize()
-                    .background(Color(0xFFF8F9FA)),
+                    .background(color = Color(0xFFF8F9FA)),
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 item {
                     Spacer(modifier = Modifier.height(8.dp))
+
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
@@ -129,7 +130,7 @@ fun HistoryScreen(
                     Box(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .background(GreenHome)
+                            .background(BeutifulGreen)
                             .padding(vertical = 18.dp)
                     ) {
                         Row(
@@ -220,7 +221,7 @@ fun HistoryCard(
         ) {
             Spacer(modifier = Modifier.width(8.dp))
             AsyncImage(
-                model = Uri.parse(item.imageUri),
+                model = item.imageUri.toUri(),
                 contentDescription = null,
                 placeholder = painterResource(R.drawable.imagemsoja),
                 modifier = Modifier
@@ -314,7 +315,7 @@ fun FilterButton(
     if (selected) {
         Button(
             onClick = onClick,
-            colors = ButtonDefaults.buttonColors(containerColor = GreenHome),
+            colors = ButtonDefaults.buttonColors(containerColor = BeutifulGreen),
             shape = RoundedCornerShape(50),
             contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp)
         ) {

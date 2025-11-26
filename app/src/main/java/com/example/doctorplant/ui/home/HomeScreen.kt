@@ -47,6 +47,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.doctorplant.R
+import com.example.doctorplant.ui.theme.BeutifulGreen
 
 @Composable
 fun HomeScreen(navController: NavController) {
@@ -76,12 +77,7 @@ fun HomeScreen(navController: NavController) {
             modifier = Modifier
                 .fillMaxWidth()
                 .background(
-                    brush = Brush.verticalGradient(
-                        colors = listOf(
-                            Color(0xFF2E7D32),
-                            Color(0xFF4CAF50)
-                        )
-                    ),
+                    color = BeutifulGreen,
                     shape = RoundedCornerShape(bottomStart = 20.dp, bottomEnd = 20.dp)
                 )
                 .padding(horizontal = 16.dp, vertical = 20.dp)
@@ -157,24 +153,13 @@ fun HomeScreen(navController: NavController) {
                         )
                     }
 
-                    Icon(
-                        painter = painterResource(R.drawable.ic_leaf),
-                        contentDescription = null,
-                        tint = Color(0xFF4CAF50),
-                        modifier = Modifier.size(28.dp)
-                    )
+//                    Icon(
+//                        painter = painterResource(R.drawable.ic_leaf),
+//                        contentDescription = null,
+//                        tint = Color(0xFF4CAF50),
+//                        modifier = Modifier.size(28.dp)
+//                    )
                 }
-
-//                TODO: Fazer essa parte se der tempo
-//                Spacer(modifier = Modifier.height(16.dp))
-//                Row(
-//                    horizontalArrangement = Arrangement.SpaceBetween,
-//                    modifier = Modifier.fillMaxWidth()
-//                ) {
-//                    StatItem("24", "Scans Today", Color(0xFF4CAF50))
-//                    StatItem("156", "Total Scans", Color(0xFF1565C0))
-//                    StatItem("89%", "Accuracy", Color(0xFFD32F2F))
-//                }
             }
         }
 
@@ -207,7 +192,7 @@ fun HomeScreen(navController: NavController) {
                 Icon(
                     painter = painterResource(R.drawable.ic_camera),
                     contentDescription = "Capture",
-                    tint = Color(0xFF4CAF50),
+                    tint = BeutifulGreen,
                     modifier = Modifier.size(40.dp)
                 )
                 Spacer(modifier = Modifier.height(8.dp))
@@ -230,7 +215,9 @@ fun HomeScreen(navController: NavController) {
         ) {
             Button(
                 onClick = { navController.navigate("camera") },
-                colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF2E7D32)),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = BeutifulGreen
+                ),
                 shape = RoundedCornerShape(12.dp),
                 modifier = Modifier.weight(1f)
             ) {

@@ -3,7 +3,6 @@ package com.example.doctorplant.ui.components
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.painterResource
 import com.example.doctorplant.R
-import com.example.doctorplant.ui.theme.GreenHome
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
@@ -15,6 +14,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.example.doctorplant.ui.theme.BeutifulGreen
 import com.example.doctorplant.ui.theme.DoctorPlantTheme
 
 data class BottomNavItem(
@@ -57,7 +57,7 @@ fun BottomNavBar(navController: NavHostController) {
                 ) {
                     FloatingActionButton(
                         onClick = { navController.navigate("camera") },
-                        containerColor = GreenHome
+                        containerColor = BeutifulGreen
                     ) {
                         Icon(
                             painter = item.icon,
@@ -88,8 +88,8 @@ fun BottomNavBar(navController: NavHostController) {
                     },
                     label = { Text(item.label, color = Color(0xFF000000)) },
                     colors = NavigationBarItemDefaults.colors(
-                        selectedIconColor = GreenHome,
-                        selectedTextColor = GreenHome,
+                        selectedIconColor = BeutifulGreen,
+                        selectedTextColor = BeutifulGreen,
                         indicatorColor = Color.Transparent
                     )
                 )
