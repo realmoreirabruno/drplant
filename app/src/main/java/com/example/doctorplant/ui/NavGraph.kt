@@ -37,7 +37,7 @@ import com.example.doctorplant.routes.HistoryRoute
 fun AppNavGraph(navController: NavHostController, modifier: Modifier = Modifier) {
     NavHost(
         navController = navController,
-        startDestination = "home",
+        startDestination = "landing",
         enterTransition = {
             val fromIndex = getRouteIndex(initialState.destination.route)
             val toIndex = getRouteIndex(targetState.destination.route)

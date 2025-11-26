@@ -1,6 +1,7 @@
 package com.example.doctorplant.ui.landing
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -34,6 +35,7 @@ import com.example.doctorplant.ui.theme.Dimmed
 import com.example.doctorplant.ui.theme.GreenButton
 import com.example.doctorplant.ui.theme.GreenHome
 import com.example.doctorplant.ui.theme.GreenIcon
+import com.example.doctorplant.ui.theme.GreenLauncherIcon
 import com.example.doctorplant.ui.theme.Typography
 
 @Composable
@@ -54,10 +56,15 @@ fun LandingScreen(navController: NavController) {
                 contentAlignment = Alignment.Center,
                 modifier = Modifier
                     .background(
-                        color = GreenIcon,
+                        color = GreenLauncherIcon,
                         shape = CircleShape
                     )
                     .size(80.dp)
+                    .border(
+                        width = 0.5.dp,
+                        color = Color.White,
+                        shape = CircleShape
+                    )
             ) {
                 Icon(
                     painter = painterResource(R.drawable.ic_leaf),
@@ -150,7 +157,7 @@ fun LandingScreen(navController: NavController) {
             GenericButton(
                 text = "Get started",
                 contentColor = GreenButton,
-                onClick = { navController.navigate("login")},
+                onClick = { navController.navigate("home")},
                 buttonLarge = true,
                 modifier = Modifier.fillMaxWidth()
             )

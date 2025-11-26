@@ -55,6 +55,9 @@ import com.example.doctorplant.R
 import com.example.doctorplant.data.model.DiagnosisHistory
 import com.example.doctorplant.ui.components.TopBar
 import com.example.doctorplant.ui.theme.GreenHome
+import com.example.doctorplant.utils.TimeUtils
+import com.example.doctorplant.utils.TimeUtils.isThisWeek
+import com.example.doctorplant.utils.TimeUtils.isToday
 
 @Composable
 fun HistoryScreen(
@@ -62,8 +65,37 @@ fun HistoryScreen(
     onItemClick: (DiagnosisHistory) -> Unit,
     onDeleteItems: (List<DiagnosisHistory>) -> Unit
 ) {
+    // 1. Estado do Filtro
+    var selectedFilter by remember { mutableStateOf(TimeUtils.HistoryFilter.ALL) }
+
+    // 2. Estado de Seleção (Multi-select para deletar)
     var selectedItems by remember { mutableStateOf(setOf<DiagnosisHistory>()) }
     val isSelectionMode = selectedItems.isNotEmpty()
+
+    val filteredList = remember(historyItems, selectedFilter) {
+        when (selectedFilter) {
+            TimeUtils.HistoryFilter.ALL -> historyItems
+            TimeUtils.HistoryFilter.TODAY -> historyItems.filter { isToday(it.date) }
+            TimeUtils.HistoryFilter.WEEK -> historyItems.filter { isThisWeek(it.date) }
+        }
+    }
+
+    val totalScans = historyItems.size
+    val totalDiseased = historyItems.count { it.diagnosisStatus != "Saudável" }
+
+    val accuracyRate = remember(historyItems) {
+        if (historyItems.isNotEmpty()) {
+            historyItems.map {
+                it.confidence
+                    .replace("%", "")
+                    .trim()
+                    .toFloatOrNull()
+                    ?: 0f
+            }.average().toInt()
+        } else {
+            0
+        }
+    }
 
     fun toggleSelection(item: DiagnosisHistory) {
         selectedItems = if (selectedItems.contains(item)) {
@@ -108,10 +140,53 @@ fun HistoryScreen(
                 modifier = Modifier
                     .fillMaxSize()
                     .background(Color(0xFFF8F9FA)),
-                contentPadding = PaddingValues(16.dp),
-                verticalArrangement = Arrangement.spacedBy(12.dp)
+                verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                if (historyItems.isEmpty()) {
+                item {
+                    Spacer(modifier = Modifier.height(8.dp))
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 16.dp, vertical = 4.dp),
+                        horizontalArrangement = Arrangement.SpaceBetween
+                    ) {
+                        FilterButton(
+                            text = "Tudo",
+                            selected = selectedFilter == TimeUtils.HistoryFilter.ALL,
+                            onClick = { selectedFilter = TimeUtils.HistoryFilter.ALL }
+                        )
+                        FilterButton(
+                            text = "Hoje",
+                            selected = selectedFilter == TimeUtils.HistoryFilter.TODAY,
+                            onClick = { selectedFilter = TimeUtils.HistoryFilter.TODAY }
+                        )
+                        FilterButton(
+                            text = "Essa semana",
+                            selected = selectedFilter == TimeUtils.HistoryFilter.WEEK,
+                            onClick = { selectedFilter = TimeUtils.HistoryFilter.WEEK }
+                        )
+                    }
+                }
+
+                item {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .background(GreenHome)
+                            .padding(vertical = 18.dp)
+                    ) {
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.SpaceEvenly
+                        ) {
+                            StatItem(value = totalScans.toString(), label = "Total de diagnósticos", color = Color.White)
+                            StatItem(value = totalDiseased.toString(), label = "Plantas doentes", color = Color.White)
+                            StatItem(value = "$accuracyRate%", label = "Acurácia Média", color = Color.White)
+                        }
+                    }
+                }
+
+                if (filteredList.isEmpty()) {
                     item {
                         Box(
                             modifier = Modifier
@@ -123,38 +198,7 @@ fun HistoryScreen(
                         }
                     }
                 } else {
-                    item {
-                        Row(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(horizontal = 16.dp, vertical = 8.dp),
-                            horizontalArrangement = Arrangement.SpaceBetween
-                        ) {
-                            FilterButton("All Time", true)
-                            FilterButton("Today", false)
-                            FilterButton("This Week", false)
-                        }
-                    }
-
-                    item {
-                        Box(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .background(GreenHome)
-                                .padding(vertical = 24.dp)
-                        ) {
-                            Row(
-                                modifier = Modifier.fillMaxWidth(),
-                                horizontalArrangement = Arrangement.SpaceEvenly
-                            ) {
-                                StatItem("247", "Total Scans", Color.White)
-                                StatItem("38", "Diseases Found", Color.White)
-                                StatItem("85%", "Accuracy Rate", Color.White)
-                            }
-                        }
-                    }
-
-                    items(historyItems) { item ->
+                    items(filteredList) { item ->
                         val isSelected = selectedItems.contains(item)
                         HistoryCard(
                             item = item,
@@ -167,11 +211,11 @@ fun HistoryScreen(
                                 }
                             },
                             onLongClick = {
-                                // Inicia a seleção ao segurar
                                 if (!isSelectionMode) {
                                     toggleSelection(item)
                                 }
-                            }
+                            },
+                            modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp)
                         )
                     }
                 }
@@ -180,133 +224,13 @@ fun HistoryScreen(
     }
 }
 
-//@Composable
-//fun HistoryScreen(
-//    historyItems: List<DiagnosisHistory>,
-//    onItemClick: (DiagnosisHistory) -> Unit
-//) {
-//    val gradient = Brush.horizontalGradient(
-//        colors = listOf(Color(0xFF2E7D32), Color(0xFF43A047))
-//    )
-//
-//    val historyItems = listOf(
-//        HistoryItem(
-//            plantName = "Tomato Plant",
-//            status = true,
-//            disease = "Late Blight Disease",
-//            confidence = 94,
-//            advice = "Immediate treatment required",
-////            time = "2:34 PM",
-//            imageRes = R.drawable.ic_alert,
-//            color = Color(0xFFFFEBEE)
-//        ),
-//        HistoryItem(
-//            plantName = "Rose Bush",
-//            status = false,
-//            disease = "Plant is Healthy",
-//            confidence = 98,
-//            advice = "Continue current care routine",
-////            time = "11:45 AM",
-//            imageRes = R.drawable.ic_alert,
-//            color = Color(0xFFE8F5E9)
-//        ),
-//        HistoryItem(
-//            plantName = "Cucumber Plant",
-//            status = true,
-//            disease = "Powdery Mildew",
-//            confidence = 87,
-//            advice = "Early stage - treatable",
-////            time = "9:22 AM",
-//            imageRes = R.drawable.ic_alert,
-//            color = Color(0xFFFFFDE7)
-//        )
-//    )
-//
-//    Column(
-//        modifier = Modifier
-//            .fillMaxSize()
-//            .background(Color(0xFFF8F9FA))
-//            .verticalScroll(rememberScrollState())
-//    ) {
-//        OutlinedTextField(
-//            value = "",
-//            onValueChange = {},
-//            modifier = Modifier
-//                .padding(horizontal = 16.dp, vertical = 8.dp)
-//                .fillMaxWidth(),
-//            placeholder = { Text("Search your plant diagnoses...") },
-//            leadingIcon = {
-//                Icon(Icons.Default.Search, contentDescription = null, tint = Color.Gray)
-//            },
-//            shape = RoundedCornerShape(12.dp),
-//            colors = TextFieldDefaults.colors(
-//                focusedContainerColor = Color(0xFF2E7D32),
-//                unfocusedContainerColor = Color(0xFFE0E0E0)
-//            )
-//        )
-//
-//        Row(
-//            modifier = Modifier
-//                .fillMaxWidth()
-//                .padding(horizontal = 16.dp, vertical = 8.dp),
-//            horizontalArrangement = Arrangement.SpaceBetween
-//        ) {
-//            FilterButton("All Time", true)
-//            FilterButton("Today", false)
-//            FilterButton("This Week", false)
-//        }
-//
-//        Box(
-//            modifier = Modifier
-//                .fillMaxWidth()
-//                .background(gradient)
-//                .padding(vertical = 24.dp)
-//        ) {
-//            Row(
-//                modifier = Modifier.fillMaxWidth(),
-//                horizontalArrangement = Arrangement.SpaceEvenly
-//            ) {
-//                StatItem("247", "Total Scans", Color.White)
-//                StatItem("38", "Diseases Found", Color.White)
-//                StatItem("85%", "Accuracy Rate", Color.White)
-//            }
-//        }
-//
-//        Spacer(Modifier.height(16.dp))
-//        Text(
-//            "Atividade Recente",
-//            modifier = Modifier.padding(start = 16.dp, bottom = 8.dp),
-//            fontWeight = FontWeight.Bold,
-//            color = Color.Black,
-//            fontSize = 18.sp
-//        )
-//
-//        if (historyItems.isEmpty()) {
-//            Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-//                Text("Nenhum diagnóstico salvo ainda.", color = Color.Gray)
-//            }
-//        } else {
-//            LazyColumn(
-//                contentPadding = PaddingValues(16.dp),
-//                verticalArrangement = Arrangement.spacedBy(12.dp)
-//            ) {
-//                items(historyItems) { item ->
-//                    HistoryCard(
-//                        item = item,
-//                        onClick = { onItemClick(item) }
-//                    )
-//                }
-//            }
-//        }
-//    }
-//}
-
 @Composable
 fun HistoryCard(
     item: DiagnosisHistory,
     isSelected: Boolean,
     onClick: () -> Unit,
-    onLongClick: () -> Unit
+    onLongClick: () -> Unit,
+    modifier: Modifier
 ) {
     val isDiseased = item.diagnosisStatus != "Saudável"
     val (dotColor, bgColor) = if (isDiseased) {
@@ -315,7 +239,7 @@ fun HistoryCard(
         Color(0xFF4CAF50) to Color(0xFFE8F5E9)
     }
     val advice = if (isDiseased) {
-        "Necessário tratamento"
+        "Necessita de tratamento"
     } else {
         "Nenhum tratamento necessário"
     }
@@ -324,7 +248,7 @@ fun HistoryCard(
         shape = RoundedCornerShape(16.dp),
         colors = CardDefaults.cardColors(containerColor = Color.White),
         elevation = CardDefaults.cardElevation(2.dp),
-        modifier = Modifier.fillMaxWidth()
+        modifier = modifier.fillMaxWidth()
             .combinedClickable(
             onClick = onClick,
             onLongClick = onLongClick
@@ -374,9 +298,9 @@ fun HistoryCard(
                         )
                         Spacer(Modifier.width(4.dp))
                         if (isDiseased) {
-                            Text("Diseased", color = dotColor, fontSize = 12.sp)
+                            Text("Doente", color = dotColor, fontSize = 12.sp)
                         } else {
-                            Text("Healthy", color = dotColor, fontSize = 12.sp)
+                            Text("Saudável", color = dotColor, fontSize = 12.sp)
                         }
                     }
                 }
@@ -424,10 +348,14 @@ fun HistoryCard(
 }
 
 @Composable
-fun FilterButton(text: String, selected: Boolean) {
+fun FilterButton(
+    text: String,
+    selected: Boolean,
+    onClick: () -> Unit
+) {
     if (selected) {
         Button(
-            onClick = {},
+            onClick = onClick,
             colors = ButtonDefaults.buttonColors(containerColor = GreenHome),
             shape = RoundedCornerShape(50),
             contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp)
@@ -438,7 +366,7 @@ fun FilterButton(text: String, selected: Boolean) {
         }
     } else {
         OutlinedButton(
-            onClick = {},
+            onClick = onClick,
             border = BorderStroke(1.dp, Color(0xFFBDBDBD)),
             shape = RoundedCornerShape(50),
             contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp)

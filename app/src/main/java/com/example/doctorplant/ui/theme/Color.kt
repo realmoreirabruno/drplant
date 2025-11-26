@@ -13,6 +13,8 @@ val Pink40 = Color(0xFF7D5260)
 val GreenHome = Color(0xFF11883e)
 val GreenButton = Color(0xFF22A753)
 val GreenIcon = Color(0xFF4bA46A)
+val GreenLauncherIcon = Color(0xFF138b40)
+
 val Dimmed = Color(0xFFBDD8C6)
 val Green = Color(0xFFE5FFF1)
 val Green100 = Color(0xFFD0FFE4)

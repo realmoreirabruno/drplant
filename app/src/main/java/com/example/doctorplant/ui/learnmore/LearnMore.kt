@@ -160,7 +160,11 @@ fun LearnMoreScreen() {
                         )
                         Spacer(modifier = Modifier.width(8.dp))
                         Column {
-                            Text("UNESP Rio Claro", fontWeight = FontWeight.Bold)
+                            Text(
+                                "UNESP Rio Claro",
+                                fontWeight = FontWeight.Bold,
+                                color = Color.Black
+                            )
                             Text(
                                 "Universidade Estadual Paulista",
                                 color = Color.Gray,
@@ -171,6 +175,8 @@ fun LearnMoreScreen() {
                     Text(
                         text = "This project is developed at the IGCE - UNESP Rio Claro campus, as part of our commitment to innovative research in agricultural technology.",
                         style = MaterialTheme.typography.bodyMedium,
+                        color = Color.Black,
+                        fontSize = 12.sp,
                         modifier = Modifier.padding(top = 8.dp)
                     )
                     Text(
@@ -295,7 +301,7 @@ fun TeamMember(
             Spacer(modifier = Modifier.width(12.dp))
 
             Column {
-                Text(name, fontWeight = FontWeight.Bold, fontSize = 16.sp)
+                Text(name, fontWeight = FontWeight.Bold, fontSize = 16.sp, color = Color.Black)
                 Text(role, color = Color.Gray, fontSize = 13.sp)
                 Text(
                     specialty,
@@ -331,7 +337,7 @@ fun FeatureItem(title: String, desc: String, iconRes: Int, color: Color, modifie
             )
             Spacer(modifier = Modifier.width(12.dp))
             Column {
-                Text(title, fontWeight = FontWeight.Bold)
+                Text(title, fontWeight = FontWeight.Bold, color = Color.Black)
                 Text(desc, color = Color.Gray, style = MaterialTheme.typography.bodySmall)
             }
         }

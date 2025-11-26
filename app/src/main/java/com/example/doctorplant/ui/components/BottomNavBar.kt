@@ -70,9 +70,14 @@ fun BottomNavBar(navController: NavHostController) {
                 NavigationBarItem(
                     selected = currentRoute == item.route,
                     onClick = {
-                        navController.navigate(item.route) {
-                            popUpTo("home")
-                            launchSingleTop = true
+                        if (currentRoute != item.route) {
+                            navController.navigate(item.route) {
+                                popUpTo("home") {
+                                    saveState = true
+                                }
+                                restoreState = true
+                                launchSingleTop = true
+                            }
                         }
                     },
                     icon = {
