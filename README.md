@@ -106,10 +106,10 @@ The app follows modern Android development best practices:
 
 ``` mermaid
 graph TD
-    UI[Screens & Composables] --> ViewModel[ViewModels (StateFlow)]
-    ViewModel --> Repository[Repositories]
-    Repository --> Remote[Remote Data Source (Retrofit)]
-    Repository --> Local[Local Data Source (Room DAO)]
+    UI["Screens & Composables"] --> ViewModel["ViewModels (StateFlow)"]
+    ViewModel --> Repository["Repositories"]
+    Repository --> Remote["Remote Data Source (Retrofit)"]
+    Repository --> Local["Local Data Source (Room DAO)"]
 ```
 
 ------------------------------------------------------------------------
