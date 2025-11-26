@@ -30,12 +30,38 @@ Infrastructure (9)**.
 
 ## 📱 Screenshots
 
-  --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-                           Home & Camera                                              Analysis & Loading                                         Diagnosis (Success)                                          History & Filters
-  --------------------------------------------------------------- ----------------------------------------------------------- ---------------------------------------------------------- -----------------------------------------------------------
-   `<img src="screenshots/home_camera.png" width="200"/>`{=html}   `<img src="screenshots/loading.png" width="200"/>`{=html}   `<img src="screenshots/result.png" width="200"/>`{=html}   `<img src="screenshots/history.png" width="200"/>`{=html}
-
-  --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+<div align="center">
+  <table>
+    <tr>
+      <td align="center"><b>Landing</b></td>
+      <td align="center"><b>Project Details</b></td>
+      <td align="center"><b>Home</b></td>
+      <td align="center"><b>Preview da imagem</b></td>
+      <td align="center"><b>Diagnóstico (Sucesso)</b></td>
+      <td align="center"><b>Histórico & Filtros</b></td>
+    </tr>
+    <tr>
+      <td>
+        <img src="https://github.com/user-attachments/assets/97534c4f-5019-4e84-be0d-4d08cc9bec70" height="800" width="200" alt="Landing Screen"/>
+      </td>
+      <td>
+        <img src="https://github.com/user-attachments/assets/6c2349cb-dc3f-4b3e-a9cc-91fb1e0993f6" height="800" width="200" alt="See More Screen" />
+      </td>
+      <td>
+        <img src="https://github.com/user-attachments/assets/1fb8cbe6-dc9a-4eb6-9593-7690bd54d322" height="800" width="200" alt="Home Screen"/>
+      </td>
+      <td>
+        <img src="https://github.com/user-attachments/assets/4df4a9e8-7c22-44c6-9f1b-02af2869f4df" height="800" width="200" alt="Loading Screen"/>
+      </td>
+      <td>
+        <img src="https://github.com/user-attachments/assets/b750b993-6a4e-436c-a860-f1037d7b220a" height="800" width="200" alt="Result Screen"/>
+      </td>
+      <td>
+        <img src="https://github.com/user-attachments/assets/dbab4569-ad52-45d5-89db-6b56b8cab019" height="800" width="200" alt="History Screen"/>
+      </td>
+    </tr>
+  </table>
+</div>
 
 > *Note: The images above are illustrative of the interface developed
 > with Jetpack Compose.*
