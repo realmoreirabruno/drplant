@@ -36,9 +36,9 @@ Infrastructure (9)**.
       <td align="center"><b>Landing</b></td>
       <td align="center"><b>Project Details</b></td>
       <td align="center"><b>Home</b></td>
-      <td align="center"><b>Preview da imagem</b></td>
-      <td align="center"><b>Diagnóstico (Sucesso)</b></td>
-      <td align="center"><b>Histórico & Filtros</b></td>
+      <td align="center"><b>Image preview</b></td>
+      <td align="center"><b>Diagnosis Suceeded</b></td>
+      <td align="center"><b>History and Filters</b></td>
     </tr>
     <tr>
       <td>
