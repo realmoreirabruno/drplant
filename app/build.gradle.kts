@@ -15,11 +15,11 @@ if (localPropertiesFile.exists()) {
 }
 
 android {
-    namespace = "com.example.doctorplant"
+    namespace = "com.meggy.doctorplant"
     compileSdk = 36
 
     defaultConfig {
-        applicationId = "com.example.doctorplant"
+        applicationId = "com.meggy.doctorplant"
         minSdk = 26
         targetSdk = 36
         versionCode = 1
@@ -33,6 +33,7 @@ android {
     buildTypes {
         release {
             isMinifyEnabled = true
+            isShrinkResources = true
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
