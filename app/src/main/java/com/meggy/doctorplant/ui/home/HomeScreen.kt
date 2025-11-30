@@ -166,6 +166,7 @@ fun HomeScreen(navController: NavController) {
 
         Text(
             text = "Escaneie sua planta",
+            color = Color.Black,
             style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
             textAlign = TextAlign.Center,
             modifier = Modifier.fillMaxWidth()
