@@ -7,6 +7,8 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
@@ -36,17 +38,14 @@ fun TopBar(
     navigationIcon: ImageVector? = Icons.AutoMirrored.Filled.ArrowBack,
     actions: @Composable RowScope.() -> Unit = {}
 ) {
-    Spacer(modifier = Modifier.height(8.dp))
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .height(70.dp)
             .background(
                 color = BeautifulGreen,
                 shape = RoundedCornerShape(bottomStart = 20.dp, bottomEnd = 20.dp)
             ),
         contentAlignment = Alignment.Center
-
     ) {
         TopAppBar(
             title = {
@@ -69,13 +68,12 @@ fun TopBar(
                 }
             },
             actions = actions,
-            windowInsets = WindowInsets(0, 0, 0, 0),
+            windowInsets = WindowInsets.statusBars,
             colors = TopAppBarDefaults.topAppBarColors(
                 containerColor = Color.Transparent,
                 titleContentColor = Color.White,
                 actionIconContentColor = Color.White
             ),
-            modifier = Modifier.height(56.dp)
         )
     }
 }

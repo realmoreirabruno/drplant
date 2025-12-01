@@ -5,7 +5,10 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.navigation.compose.currentBackStackEntryAsState
+import androidx.navigation.compose.rememberNavController
 import com.meggy.doctorplant.ui.theme.DoctorPlantTheme
 
 class MainActivity : ComponentActivity() {
@@ -13,8 +16,14 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
-            DoctorPlantTheme {
-                MainScreen()
+            val navController = rememberNavController()
+            val navBackStackEntry by navController.currentBackStackEntryAsState()
+            val currentRoute = navBackStackEntry?.destination?.route
+
+            val isDiagnosisScreen = currentRoute?.startsWith("diagnosis") == true
+
+            DoctorPlantTheme(forceDarkIcons = isDiagnosisScreen) {
+                MainScreen(navController = navController)
             }
         }
     }

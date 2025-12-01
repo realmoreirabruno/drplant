@@ -34,7 +34,6 @@ class DiagnosisViewModel(
     fun diagnosePlant(context: Context, imageUri: Uri) {
         _uiState.value = DiagnosisUiState.Loading
 
-        // 1. Marca o tempo de início
         val startTime = System.currentTimeMillis()
 
         viewModelScope.launch {

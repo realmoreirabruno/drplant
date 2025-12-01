@@ -15,8 +15,10 @@ import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
@@ -47,14 +49,27 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.meggy.doctorplant.R
 import com.meggy.doctorplant.ui.theme.BeautifulGreen
+import com.meggy.doctorplant.utils.TimeUtils.onHorizontalSwipe
 
 @Composable
 fun HomeScreen(navController: NavController) {
+    fun navigateToHistory() {
+        navController.navigate("history") {
+            popUpTo("home") { saveState = true }
+            restoreState = true
+            launchSingleTop = true
+        }
+    }
+
     Column(
         modifier = Modifier
             .fillMaxSize()
             .verticalScroll(rememberScrollState())
             .background(Color(0xFFF8F8F8))
+            .navigationBarsPadding()
+            .onHorizontalSwipe(
+                onSwipeLeft = { navigateToHistory() }
+            )
     ) {
         val galleryLauncher = rememberLauncherForActivityResult(
             contract = ActivityResultContracts.GetContent()
@@ -62,8 +77,6 @@ fun HomeScreen(navController: NavController) {
             uri?.let { selectedUri ->
                 val encodedUri = Uri.encode(selectedUri.toString())
                 navController.navigate("diagnosis/$encodedUri") {
-                    // Remove a tela atual da pilha para o usuário não voltar
-                    // para a seleção se apertar "Voltar" na tela de resultado.
                     popUpTo(navController.graph.startDestinationId) {
                         saveState = false
                     }
@@ -79,9 +92,14 @@ fun HomeScreen(navController: NavController) {
                     color = BeautifulGreen,
                     shape = RoundedCornerShape(bottomStart = 20.dp, bottomEnd = 20.dp)
                 )
-                .padding(horizontal = 16.dp, vertical = 20.dp)
+                // .padding(horizontal = 16.dp, vertical = 20.dp)
         ) {
-            Column {
+            Column(
+                modifier = Modifier
+                    .statusBarsPadding()
+                    .padding(horizontal = 16.dp)
+                    .padding(top = 20.dp, bottom = 20.dp)
+            ) {
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceBetween,

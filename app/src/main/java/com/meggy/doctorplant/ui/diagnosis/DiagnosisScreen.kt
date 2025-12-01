@@ -1,6 +1,7 @@
 package com.meggy.doctorplant.ui.diagnosis
 
 import android.net.Uri
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -32,6 +33,7 @@ import androidx.compose.material3.ProgressIndicatorDefaults
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -51,6 +53,7 @@ import com.meggy.doctorplant.data.model.DiseaseInformation
 import com.meggy.doctorplant.data.model.PlantDisease
 import com.meggy.doctorplant.ui.theme.BeautifulGreen
 import com.meggy.doctorplant.ui.theme.DoctorPlantTheme
+import com.meggy.doctorplant.utils.TimeUtils.safeDecode
 
 @Composable
 fun DiagnosisScreen(
@@ -58,6 +61,8 @@ fun DiagnosisScreen(
     uiState: DiagnosisUiState,
     onBackClick: () -> Unit
 ) {
+    BackHandler { onBackClick() }
+
     when (uiState) {
         DiagnosisUiState.Idle,
         DiagnosisUiState.Loading -> {
@@ -65,7 +70,7 @@ fun DiagnosisScreen(
                 Modifier.fillMaxSize(),
                 contentAlignment = Alignment.Center
             ) {
-                CircularProgressIndicator()
+                CircularProgressIndicator(color = BeautifulGreen)
             }
         }
 
@@ -122,7 +127,22 @@ fun DiagnosisSuccessScreen(
     imageUri: Uri,
     data: PlantDisease,
     scanTime: String,
+    isFromHistory: Boolean = false
 ) {
+    val cleanData = if (!isFromHistory) data
+    else remember(data) {
+        data.copy(
+            technicalId = safeDecode(data.technicalId),
+            diagnosis = safeDecode(data.diagnosis),
+            information = data.information.copy(
+                name = safeDecode(data.information.name),
+                description = safeDecode(data.information.description),
+                treatment = safeDecode(data.information.treatment),
+                symptoms = data.information.symptoms.map { safeDecode(it) }
+            )
+        )
+    }
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -185,7 +205,7 @@ fun DiagnosisSuccessScreen(
                         .padding(end = 8.dp)
                 ) {
                     Text(
-                        text = data.information.name,
+                        text = cleanData.information.name,
                         color = Color.Black,
                         style = MaterialTheme.typography.titleLarge.copy(
                             fontWeight = FontWeight.Bold,
@@ -194,13 +214,13 @@ fun DiagnosisSuccessScreen(
                     )
 
                     Text(
-                        text = data.technicalId,
+                        text = cleanData.technicalId,
                         color = Color(0xFF757575),
                         style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold)
                     )
                 }
 
-                if (data.diagnosis != "Saudável") {
+                if (cleanData.diagnosis != "Saudável") {
                     Box(modifier = Modifier.padding(top = 8.dp)) {
                         StatusChip(
                             label = "Doente",
@@ -219,10 +239,10 @@ fun DiagnosisSuccessScreen(
             Spacer(Modifier.height(4.dp))
 
             Row(verticalAlignment = Alignment.CenterVertically) {
-                Text(data.confidence, color = Color(0xFF2E7D32), fontWeight = FontWeight.Bold)
+                Text(cleanData.confidence, color = Color(0xFF2E7D32), fontWeight = FontWeight.Bold)
                 Spacer(Modifier.width(8.dp))
                 LinearProgressIndicator(
-                    progress = { data.confidenceToFloat },
+                    progress = { cleanData.confidenceToFloat },
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(8.dp)
@@ -256,7 +276,7 @@ fun DiagnosisSuccessScreen(
 
                     Spacer(Modifier.height(8.dp))
                     Text(
-                        text = data.information.description,
+                        text = cleanData.information.description,
                         style = MaterialTheme.typography.bodyMedium,
                         color = Color.DarkGray
                     )
@@ -278,7 +298,7 @@ fun DiagnosisSuccessScreen(
 
                     Spacer(Modifier.height(8.dp))
 
-                    data.information.symptoms.forEachIndexed { index, symptom ->
+                    cleanData.information.symptoms.forEachIndexed { index, symptom ->
                         Row(
                             verticalAlignment = Alignment.CenterVertically,
                             modifier = Modifier.padding(vertical = 4.dp)
@@ -323,7 +343,7 @@ fun DiagnosisSuccessScreen(
 
                     Spacer(Modifier.height(8.dp))
                     Text(
-                        text = data.information.treatment,
+                        text = cleanData.information.treatment,
                         style = MaterialTheme.typography.bodyMedium,
                         color = Color.DarkGray
                     )

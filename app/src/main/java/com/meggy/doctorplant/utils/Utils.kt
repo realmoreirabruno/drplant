@@ -2,6 +2,16 @@ package com.meggy.doctorplant.utils
 
 import java.util.Locale
 import java.util.Calendar
+import androidx.compose.foundation.gestures.detectHorizontalDragGestures
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.composed
+import androidx.compose.ui.input.pointer.pointerInput
+import java.net.URLDecoder
+import java.nio.charset.StandardCharsets
 
 object TimeUtils {
     fun customFormatDuration(millis: Long): String {
@@ -39,5 +49,37 @@ object TimeUtils {
         calendar.timeInMillis = dateMillis
         return calendar.get(Calendar.YEAR) == currentYear &&
                 calendar.get(Calendar.WEEK_OF_YEAR) == currentWeek
+    }
+
+    fun Modifier.onHorizontalSwipe(
+        onSwipeLeft: () -> Unit = {},
+        onSwipeRight: () -> Unit = {},
+        threshold: Float = 200f
+    ): Modifier = composed {
+        var offsetX by remember { mutableFloatStateOf(0f) }
+
+        pointerInput(Unit) {
+            detectHorizontalDragGestures(
+                onDragEnd = {
+                    if (offsetX > threshold) {
+                        onSwipeRight()
+                    } else if (offsetX < -threshold) {
+                        onSwipeLeft()
+                    }
+                    offsetX = 0f
+                },
+                onHorizontalDrag = { _, dragAmount ->
+                    offsetX += dragAmount
+                }
+            )
+        }
+    }
+
+    fun safeDecode(text: String): String {
+        return try {
+            URLDecoder.decode(text, StandardCharsets.UTF_8.toString())
+        } catch (e: Exception) {
+            text.replace("+", " ")
+        }
     }
 }

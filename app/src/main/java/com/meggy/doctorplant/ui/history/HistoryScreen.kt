@@ -1,5 +1,6 @@
 package com.meggy.doctorplant.ui.history
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.expandHorizontally
@@ -17,9 +18,12 @@ import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -50,16 +54,20 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.net.toUri
+import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import coil.compose.AsyncImage
 import com.meggy.doctorplant.R
 import com.meggy.doctorplant.data.model.DiagnosisHistory
 import com.meggy.doctorplant.ui.components.TopBar
 import com.meggy.doctorplant.ui.theme.BeautifulGreen
 import com.meggy.doctorplant.utils.TimeUtils
+import com.meggy.doctorplant.utils.TimeUtils.onHorizontalSwipe
 
 sealed interface HistoryEvent {
     data class ChangeFilter(val filter: TimeUtils.HistoryFilter) : HistoryEvent
@@ -69,11 +77,26 @@ sealed interface HistoryEvent {
 }
 @Composable
 fun HistoryScreen(
+    navController: NavController,
     state: HistoryState,
     onItemClick: (DiagnosisHistory) -> Unit,
     onEvent: (HistoryEvent) -> Unit
 ) {
+
+    BackHandler(enabled = state.isSelectionMode) {
+        onEvent(HistoryEvent.ClearSelection)
+    }
+
+    fun navigateToHome() {
+        navController.navigate("home") {
+            popUpTo("home") { saveState = true }
+            restoreState = true
+            launchSingleTop = true
+        }
+    }
+
     Scaffold(
+        contentWindowInsets = WindowInsets(0.dp),
         topBar = {
             if (state.isSelectionMode) {
                 TopBar(
@@ -100,11 +123,18 @@ fun HistoryScreen(
                 .fillMaxSize()
                 .background(Color(0xFFF8F9FA))
                 .padding(paddingValues)
+                .onHorizontalSwipe(
+                    onSwipeRight = { navigateToHome() }
+                )
         ) {
             LazyColumn(
                 modifier = Modifier
                     .fillMaxSize()
                     .background(color = Color(0xFFF8F9FA)),
+                contentPadding = PaddingValues(
+                    bottom = WindowInsets
+                        .navigationBars.asPaddingValues().calculateBottomPadding() + 16.dp
+                ),
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 item {
@@ -239,7 +269,7 @@ fun HistoryCard(
     onLongClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val isDiseased = item.diagnosisStatus != "Saudável"
+    val isDiseased = item.diagnosisStatus != "Planta Saudável"
 
     val (dotColor, bgColor) = if (isDiseased) {
         Color.Red to Color(0xFFFFEBEE)
@@ -300,8 +330,13 @@ fun HistoryCard(
                         text = item.diseaseName,
                         fontSize = 16.sp,
                         fontWeight = FontWeight.Bold,
-                        color = Color.Black
+                        color = Color.Black,
+                        modifier = Modifier.weight(1f),
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
                     )
+
+                    Spacer(modifier = Modifier.width(8.dp))
 
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         Box(
@@ -393,6 +428,7 @@ fun StatItem(value: String, label: String, color: Color) {
 @Composable
 fun HistoryScreenPreview() {
     HistoryScreen(
+        navController = rememberNavController(),
         state = HistoryState(),
         onItemClick = {},
         onEvent = {}

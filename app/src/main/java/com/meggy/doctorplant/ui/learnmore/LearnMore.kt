@@ -1,5 +1,6 @@
 package com.meggy.doctorplant.ui.learnmore
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
@@ -15,9 +16,12 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -64,7 +68,7 @@ fun LearnMoreScreen() {
                 Text(
                     text = "Sistema avançado de reconhecimento de doenças em plantas, baseado em IA, desenvolvido por pesquisadores apaixonados.",
                     color = Color.White.copy(alpha = 0.9f),
-                    fontSize = 13.sp,
+                    fontSize = 12.sp,
                     textAlign = TextAlign.Center,
                     modifier = Modifier.padding(top = 8.dp)
                 )
@@ -102,7 +106,7 @@ fun LearnMoreScreen() {
                         color = Color.Black.copy(alpha = 0.7f),
                         letterSpacing = 0.5.sp,
                         lineHeight = 18.sp,
-                        fontSize = 14.sp
+                        fontSize = 12.sp,
                     )
 
                     Spacer(modifier = Modifier.height(8.dp))
@@ -120,18 +124,21 @@ fun LearnMoreScreen() {
                 name = "Bruno Moreira",
                 role = "Dev Mobile",
                 specialty = "Aplicativo Android",
+                photoResId = R.drawable.bruno_picture,
                 specialtyColor = Color(0xFF2E7D32)
             )
             TeamMember(
                 name = "Victor Mariano Rocha",
                 role = "Dev IA",
                 specialty = "Segmentação e Aprendizado de Máquina",
+                photoResId = R.drawable.victor_picture,
                 specialtyColor = Color(0xFF1565C0)
             )
             TeamMember(
                 name = "Julia Amadio",
                 role = "Dev Backend e IA",
                 specialty = "Integração de API e Ferramentas de IA",
+                photoResId = R.drawable.julia_picture,
                 specialtyColor = Color(0xFFD32F2F)
             )
 
@@ -142,6 +149,7 @@ fun LearnMoreScreen() {
                 name = "Prof. Pedronette",
                 role = "Professor Supervisor",
                 specialty = "DEMAC",
+                photoResId = R.drawable.professor_picture,
                 specialtyColor = Color(0xFF388E3C)
             )
 
@@ -276,6 +284,7 @@ fun SectionTitle(title: String) {
 fun TeamMember(
     name: String,
     role: String,
+    photoResId: Int,
     specialty: String,
     specialtyColor: Color
 ) {
@@ -291,16 +300,18 @@ fun TeamMember(
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier.padding(12.dp)
         ) {
-            Icon(
-                imageVector = Icons.Default.AccountCircle,
-                contentDescription = null,
-                tint = Color.Gray,
-                modifier = Modifier.size(48.dp)
+            Image(
+                painter = painterResource(photoResId),
+                contentDescription = "Foto do participante",
+                contentScale = ContentScale.Crop,
+                modifier = Modifier
+                    .size(100.dp)
+                    .clip(RoundedCornerShape(16.dp))
             )
 
             Spacer(modifier = Modifier.width(12.dp))
 
-            Column {
+            Column(modifier = Modifier.weight(1f)) {
                 Text(name, fontWeight = FontWeight.Bold, fontSize = 16.sp, color = Color.Black)
                 Text(role, color = Color.Gray, fontSize = 13.sp)
                 Text(

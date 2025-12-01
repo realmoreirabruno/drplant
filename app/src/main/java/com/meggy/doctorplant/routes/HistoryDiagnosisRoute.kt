@@ -13,7 +13,6 @@ fun HistoryDiagnosisRoute(
     imageUriString: String?,
     plantDataJson: String?
 ) {
-    // Processa os argumentos recebidos
     val imageUri = remember(imageUriString) {
         imageUriString?.toUri() ?: Uri.EMPTY
     }
@@ -30,7 +29,8 @@ fun HistoryDiagnosisRoute(
         DiagnosisSuccessScreen(
             imageUri = imageUri,
             data = plantDisease,
-            scanTime = "Histórico"
+            scanTime = "Histórico",
+            isFromHistory = true
         )
     }
 }

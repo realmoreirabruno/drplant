@@ -61,8 +61,8 @@ fun GenericOutlinedButton(
                 text,
                 color = textColor,
                 textAlign = TextAlign.Center,
-                fontSize = if (buttonLarge || textBold) 16.sp else 14.sp,
-                fontWeight = if (buttonLarge || textBold) FontWeight.Bold else FontWeight.Normal,
+                fontSize = if (textBold) 16.sp else 14.sp,
+                fontWeight = if (textBold) FontWeight.Bold else FontWeight.Normal,
                 modifier = Modifier.padding(if (buttonLarge) 8.dp else 0.dp),
             )
         }

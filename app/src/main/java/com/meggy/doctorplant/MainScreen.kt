@@ -1,5 +1,6 @@
 package com.meggy.doctorplant
 
+import androidx.compose.foundation.layout.PaddingValues
 import com.meggy.doctorplant.ui.AppNavGraph
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
@@ -7,6 +8,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.meggy.doctorplant.ui.components.BottomNavBar
@@ -14,8 +16,9 @@ import com.meggy.doctorplant.ui.components.TopBar
 import com.meggy.doctorplant.ui.theme.DoctorPlantTheme
 
 @Composable
-fun MainScreen() {
-    val navController = rememberNavController()
+fun MainScreen(
+    navController: androidx.navigation.NavHostController = rememberNavController()
+) {
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry?.destination?.route
 
@@ -26,6 +29,12 @@ fun MainScreen() {
 
     val topBarRoutes = listOf(
         "diagnosis"
+    )
+
+    val fullScreenRoutes = listOf(
+        "landing",
+        "home",
+        "history"
     )
 
     Scaffold(
@@ -46,9 +55,15 @@ fun MainScreen() {
             }
         }
     ) { innerPadding ->
+        val targetPadding = if (currentRoute in fullScreenRoutes) {
+            PaddingValues(0.dp)
+        } else {
+            innerPadding
+        }
+
         AppNavGraph(
             navController = navController,
-            modifier = Modifier.padding(innerPadding)
+            modifier = Modifier.padding(targetPadding)
         )
     }
 }

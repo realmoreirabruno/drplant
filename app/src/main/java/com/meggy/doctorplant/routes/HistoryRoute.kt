@@ -18,6 +18,7 @@ fun HistoryRoute(
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
     HistoryScreen(
+        navController = navController,
         state = uiState,
         onItemClick = { item -> navigateToDetails(navController, item) },
         onEvent = { event ->
