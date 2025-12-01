@@ -42,13 +42,13 @@ Infrastructure (9)**.
     </tr>
     <tr>
       <td>
-        <img src="https://github.com/user-attachments/assets/97534c4f-5019-4e84-be0d-4d08cc9bec70" height="800" width="200" alt="Landing Screen"/>
+        <img src="https://github.com/user-attachments/assets/4752717b-e66c-49bc-9ed3-5a3beb791c13" height="800" width="200" alt="Landing Screen"/>
       </td>
       <td>
         <img src="https://github.com/user-attachments/assets/6c2349cb-dc3f-4b3e-a9cc-91fb1e0993f6" height="800" width="200" alt="See More Screen" />
       </td>
       <td>
-        <img src="https://github.com/user-attachments/assets/1fb8cbe6-dc9a-4eb6-9593-7690bd54d322" height="800" width="200" alt="Home Screen"/>
+        <img src="https://github.com/user-attachments/assets/5cf83e46-0004-4f30-af01-54176045c2b1" height="800" width="200" alt="Home Screen"/>
       </td>
       <td>
         <img src="https://github.com/user-attachments/assets/4df4a9e8-7c22-44c6-9f1b-02af2869f4df" height="800" width="200" alt="Loading Screen"/>
@@ -57,7 +57,7 @@ Infrastructure (9)**.
         <img src="https://github.com/user-attachments/assets/b750b993-6a4e-436c-a860-f1037d7b220a" height="800" width="200" alt="Result Screen"/>
       </td>
       <td>
-        <img src="https://github.com/user-attachments/assets/dbab4569-ad52-45d5-89db-6b56b8cab019" height="800" width="200" alt="History Screen"/>
+        <img src="https://github.com/user-attachments/assets/f832c150-632c-4941-a47f-1117e2e82da7" height="800" width="200" alt="History Screen"/>
       </td>
     </tr>
   </table>
