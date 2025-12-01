@@ -43,6 +43,26 @@ fun AppNavGraph(navController: NavHostController, modifier: Modifier = Modifier)
                 slideOutOfContainer(AnimatedContentTransitionScope.SlideDirection.Right, animationSpec = tween(500))
             }
         },
+        popEnterTransition = {
+            val fromIndex = getRouteIndex(initialState.destination.route)
+            val toIndex = getRouteIndex(targetState.destination.route)
+
+            if (toIndex > fromIndex) {
+                slideIntoContainer(AnimatedContentTransitionScope.SlideDirection.Left, animationSpec = tween(500))
+            } else {
+                slideIntoContainer(AnimatedContentTransitionScope.SlideDirection.Right, animationSpec = tween(500))
+            }
+        },
+        popExitTransition = {
+            val fromIndex = getRouteIndex(initialState.destination.route)
+            val toIndex = getRouteIndex(targetState.destination.route)
+
+            if (toIndex > fromIndex) {
+                slideOutOfContainer(AnimatedContentTransitionScope.SlideDirection.Left, animationSpec = tween(500))
+            } else {
+                slideOutOfContainer(AnimatedContentTransitionScope.SlideDirection.Right, animationSpec = tween(500))
+            }
+        },
         modifier = modifier
     ) {
         composable("landing") { LandingScreen(navController) }

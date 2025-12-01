@@ -24,10 +24,12 @@ data class BottomNavItem(
 )
 
 fun getRouteIndex(route: String?): Int {
-    return when (route) {
-        "home" -> 0
-        "camera" -> 1
-        "history" -> 2
+    return when {
+        route == "landing" -> -1
+        route == "home" -> 0
+        route == "camera" -> 1
+        route == "history" -> 2
+        route?.startsWith("diagnosis") == true -> 3
         else -> 0
     }
 }

@@ -157,7 +157,13 @@ fun LandingScreen(navController: NavController) {
             GenericButton(
                 text = "Comece aqui",
                 contentColor = BeautifulGreen,
-                onClick = { navController.navigate("home")},
+                onClick = {
+                    navController.navigate("home") {
+                        popUpTo("landing") {
+                            inclusive = true
+                        }
+                    }
+                },
                 buttonLarge = true,
                 modifier = Modifier.fillMaxWidth()
             )

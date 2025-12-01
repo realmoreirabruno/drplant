@@ -1,5 +1,6 @@
 package com.meggy.doctorplant.ui.home
 
+import android.content.Context
 import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -35,24 +36,38 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.Dialog
+import androidx.compose.ui.window.DialogProperties
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import coil.compose.AsyncImage
 import com.meggy.doctorplant.R
 import com.meggy.doctorplant.ui.theme.BeautifulGreen
 import com.meggy.doctorplant.utils.TimeUtils.onHorizontalSwipe
+import java.io.File
+import java.io.FileOutputStream
+import java.io.InputStream
 
 @Composable
 fun HomeScreen(navController: NavController) {
+    val context = LocalContext.current
+    var selectedImageUri by remember { mutableStateOf<Uri?>(null) }
+
     fun navigateToHistory() {
         navController.navigate("history") {
             popUpTo("home") { saveState = true }
@@ -75,13 +90,7 @@ fun HomeScreen(navController: NavController) {
             contract = ActivityResultContracts.GetContent()
         ) { uri: Uri? ->
             uri?.let { selectedUri ->
-                val encodedUri = Uri.encode(selectedUri.toString())
-                navController.navigate("diagnosis/$encodedUri") {
-                    popUpTo(navController.graph.startDestinationId) {
-                        saveState = false
-                    }
-                    launchSingleTop = true
-                }
+                selectedImageUri = selectedUri
             }
         }
 
@@ -92,7 +101,6 @@ fun HomeScreen(navController: NavController) {
                     color = BeautifulGreen,
                     shape = RoundedCornerShape(bottomStart = 20.dp, bottomEnd = 20.dp)
                 )
-                // .padding(horizontal = 16.dp, vertical = 20.dp)
         ) {
             Column(
                 modifier = Modifier
@@ -127,7 +135,7 @@ fun HomeScreen(navController: NavController) {
                             )
                         }
                     }
-
+//                    TODO: Future login feature
 //                    Icon(
 //                        imageVector = Icons.Default.AccountCircle,
 //                        tint = Color.White,
@@ -169,13 +177,6 @@ fun HomeScreen(navController: NavController) {
                             fontSize = 13.sp
                         )
                     }
-
-//                    Icon(
-//                        painter = painterResource(R.drawable.ic_leaf),
-//                        contentDescription = null,
-//                        tint = Color(0xFF4CAF50),
-//                        modifier = Modifier.size(28.dp)
-//                    )
                 }
             }
         }
@@ -290,35 +291,104 @@ fun HomeScreen(navController: NavController) {
             }
         }
     }
+    selectedImageUri?.let { uri ->
+        Dialog(
+            onDismissRequest = { selectedImageUri = null },
+            properties = DialogProperties(
+                usePlatformDefaultWidth = false,
+                decorFitsSystemWindows = false
+            )
+        ) {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(Color.Black),
+                contentAlignment = Alignment.Center
+            ) {
+                AsyncImage(
+                    model = uri,
+                    contentDescription = "Preview",
+                    modifier = Modifier.fillMaxWidth(),
+                    contentScale = androidx.compose.ui.layout.ContentScale.Fit
+                )
+
+                Row(
+                    horizontalArrangement = Arrangement.SpaceEvenly,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .align(Alignment.BottomCenter)
+                        .padding(24.dp)
+                        .navigationBarsPadding()
+                ) {
+                    OutlinedButton(
+                        onClick = { selectedImageUri = null },
+                        shape = RoundedCornerShape(12.dp),
+                        border = BorderStroke(2.dp, BeautifulGreen),
+                        modifier = Modifier.height(54.dp)
+                    ) {
+                        Text(
+                            text = "Cancelar",
+                            color = BeautifulGreen,
+                            fontSize = 16.sp,
+                            fontWeight = FontWeight.Medium
+                        )
+                    }
+
+                    Button(
+                        onClick = {
+                            val savedUri = saveImageToAppStorage(context, uri)
+                            savedUri?.let { finalUri ->
+                                val encodedUri = Uri.encode(finalUri.toString())
+                                navController.navigate("diagnosis/$encodedUri") {
+                                    popUpTo(navController.graph.startDestinationId) {
+                                        saveState = false
+                                    }
+                                    launchSingleTop = true
+                                }
+                                selectedImageUri = null
+                            }
+                        },
+                        shape = RoundedCornerShape(12.dp),
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = BeautifulGreen,
+                            contentColor = Color.White
+                        ),
+                        modifier = Modifier.height(54.dp)
+                    ) {
+                        Text(
+                            text = "Usar esta foto",
+                            fontSize = 16.sp,
+                            fontWeight = FontWeight.SemiBold
+                        )
+                    }
+                }
+            }
+        }
+    }
 }
 
-@Composable
-private fun StatItem(value: String, label: String, color: Color) {
-    Column(
-        horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = Modifier
-            .width(85.dp)
-            .background(
-                color = color,
-                shape = RoundedCornerShape(16.dp)
-            )
-    ) {
-        Text(
-            text = value,
-            color = Color.White,
-            fontWeight = FontWeight.Bold,
-            fontSize = 18.sp,
-            modifier = Modifier
-                .padding(top = 4.dp)
-        )
-        Text(
-            text = label,
-            color = Color.White,
-            fontSize = 12.sp,
-            letterSpacing = 0.sp,
-            modifier = Modifier
-                .padding(horizontal = 8.dp)
-        )
+fun saveImageToAppStorage(context: Context, sourceUri: Uri): Uri? {
+    return try {
+        // Cria um arquivo no armazenamento interno do app
+        val outputDir = context.getExternalFilesDir(android.os.Environment.DIRECTORY_PICTURES) ?: context.filesDir
+        val outputFile = File(outputDir, "gallery_import_${System.currentTimeMillis()}.jpg")
+
+        // Abre os fluxos de entrada (galeria) e saída (arquivo local)
+        val inputStream: InputStream? = context.contentResolver.openInputStream(sourceUri)
+        val outputStream = FileOutputStream(outputFile)
+
+        // Copia os bytes
+        inputStream?.use { input ->
+            outputStream.use { output ->
+                input.copyTo(output)
+            }
+        }
+
+        // Retorna a URI do arquivo novo que pertence ao App
+        Uri.fromFile(outputFile)
+    } catch (e: Exception) {
+        e.printStackTrace()
+        null
     }
 }
 

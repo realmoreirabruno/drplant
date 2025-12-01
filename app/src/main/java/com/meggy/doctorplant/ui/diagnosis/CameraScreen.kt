@@ -218,10 +218,11 @@ private fun CameraContent(
 
                     Button(
                         onClick = {
-                            val encodedUri = Uri.encode(uri.toString())
+                            val encodedUri = java.net.URLEncoder.encode(uri.toString(), "UTF-8")
                             navController.navigate("diagnosis/$encodedUri") {
-                                popUpTo(navController.graph.startDestinationId) { saveState = false }
-                                launchSingleTop = true
+                                popUpTo("home") {
+                                    inclusive = false
+                                }
                             }
                         },
                         shape = RoundedCornerShape(12.dp),

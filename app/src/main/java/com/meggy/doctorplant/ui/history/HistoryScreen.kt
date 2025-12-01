@@ -75,6 +75,7 @@ sealed interface HistoryEvent {
     object ClearSelection : HistoryEvent
     object DeleteSelected : HistoryEvent
 }
+
 @Composable
 fun HistoryScreen(
     navController: NavController,
@@ -133,7 +134,7 @@ fun HistoryScreen(
                     .background(color = Color(0xFFF8F9FA)),
                 contentPadding = PaddingValues(
                     bottom = WindowInsets
-                        .navigationBars.asPaddingValues().calculateBottomPadding() + 16.dp
+                        .navigationBars.asPaddingValues().calculateBottomPadding() + 96.dp
                 ),
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
@@ -289,11 +290,12 @@ fun HistoryCard(
         shape = RoundedCornerShape(16.dp),
         colors = CardDefaults.cardColors(containerColor = cardContainerColor),
         elevation = CardDefaults.cardElevation(if (isSelected) 0.dp else 2.dp),
-        modifier = modifier.fillMaxWidth()
+        modifier = modifier
+            .fillMaxWidth()
             .combinedClickable(
-            onClick = onClick,
-            onLongClick = onLongClick
-        )
+                onClick = onClick,
+                onLongClick = onLongClick
+            )
     ) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
