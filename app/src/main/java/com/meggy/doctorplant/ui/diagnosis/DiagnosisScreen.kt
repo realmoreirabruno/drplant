@@ -341,7 +341,8 @@ fun DiagnosisSuccessScreen(
                     cleanData.information.symptoms.forEachIndexed { index, symptom ->
                         Row(
                             verticalAlignment = Alignment.CenterVertically,
-                            modifier = Modifier.padding(vertical = 4.dp)
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            modifier = Modifier.padding(vertical = 8.dp)
                         ) {
                             Surface(
                                 color = Color(0xFF4CAF50).copy(alpha = 0.1f),
@@ -381,7 +382,7 @@ fun DiagnosisSuccessScreen(
                         )
                     }
 
-                    Spacer(Modifier.height(8.dp))
+                    Spacer(Modifier.height(12.dp))
                     Text(
                         text = cleanData.information.treatment,
                         style = MaterialTheme.typography.bodyMedium,

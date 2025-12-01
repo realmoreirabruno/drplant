@@ -12,6 +12,16 @@ val Pink80 = Color(0xFFEFB8C8)
 val Pink40 = Color(0xFF7D5260)
 
 val BeautifulGreen = Color(0xFF2E7D32)
+val BeautifulGreenDark = Color(0xFF81C784)
+
+val LightBackground = Color(0xFFF8F9FA)
+val DarkBackground = Color(0xFF121212)
+
+val LightSurface = Color.White
+val LightSurfaceVariant = Color.White
+
+val DarkSurface = Color(0xFF2C2C2C)
+val DarkSurfaceVariant = Color(0xFF49454F)
 
 val Black300 = Color(0xFFFAFAFB)
 val Black400 = Color(0xFFF2F3F4)
