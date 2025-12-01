@@ -12,11 +12,6 @@ val Pink80 = Color(0xFFEFB8C8)
 val Pink40 = Color(0xFF7D5260)
 
 val BeautifulGreen = Color(0xFF2E7D32)
-val Green = Color(0xFFE5FFF1)
-val Green100 = Color(0xFFD0FFE4)
-val Green500 = Color(0xFF2DC26E)
-val Green700 = Color(0xFF1F9050)
-val Green800 = Color(0xFF008531)
 
 val Black300 = Color(0xFFFAFAFB)
 val Black400 = Color(0xFFF2F3F4)

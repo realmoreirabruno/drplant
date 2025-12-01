@@ -19,6 +19,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.CloudOff
 import androidx.compose.material.icons.filled.Emergency
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material3.Button
@@ -43,6 +44,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -75,24 +77,10 @@ fun DiagnosisScreen(
         }
 
         is DiagnosisUiState.Error -> {
-            Column(
-                Modifier.fillMaxSize(),
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Center
-            ) {
-                Text("Erro: ${uiState.message}", color = Color.Red)
-                Button(
-                    onClick = onBackClick,
-                    shape = RoundedCornerShape(12.dp),
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = BeautifulGreen,
-                        contentColor = Color.White
-                    ),
-                    modifier = Modifier.height(54.dp)
-                ) {
-                    Text("Voltar")
-                }
-            }
+            DiagnosisError(
+                message = uiState.message,
+                onBackClick = onBackClick
+            )
         }
 
         is DiagnosisUiState.Success -> {
@@ -119,6 +107,58 @@ fun StatusChip(
             .padding(horizontal = horizontalPadding, vertical = verticalPadding)
     ) {
         Text(label, color = color, fontWeight = FontWeight.Medium)
+    }
+}
+
+@Composable
+fun DiagnosisError(message: String, onBackClick: () -> Unit) {
+    Column(
+        Modifier
+            .fillMaxSize()
+            .padding(24.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
+    ) {
+        Icon(
+            imageVector = Icons.Default.CloudOff,
+            contentDescription = null,
+            tint = Color.Gray,
+            modifier = Modifier.size(64.dp)
+        )
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        Text(
+            text = "Ops!",
+            style = MaterialTheme.typography.headlineMedium,
+            fontWeight = FontWeight.Bold,
+            color = BeautifulGreen
+        )
+
+        Spacer(modifier = Modifier.height(8.dp))
+
+        Text(
+            text = message,
+            color = Color.Gray,
+            textAlign = TextAlign.Center,
+            style = MaterialTheme.typography.bodyLarge
+        )
+
+        Spacer(modifier = Modifier.height(32.dp))
+
+        Button(
+            onClick = onBackClick,
+            shape = RoundedCornerShape(12.dp),
+            colors = ButtonDefaults.buttonColors(
+                containerColor = BeautifulGreen,
+                contentColor = Color.White
+            ),
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(54.dp)
+        ) {
+            Text("Voltar")
+        }
     }
 }
 

@@ -7,6 +7,7 @@ import androidx.lifecycle.viewModelScope
 import com.meggy.doctorplant.data.model.DiagnosisHistory
 import com.meggy.doctorplant.data.model.PlantDisease
 import com.meggy.doctorplant.data.repository.DiagnosisRepository
+import com.meggy.doctorplant.utils.NetworkUtils
 import com.meggy.doctorplant.utils.TimeUtils
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -22,6 +23,7 @@ sealed class DiagnosisUiState {
         val data: PlantDisease,
         val scanTime: String
     ) : DiagnosisUiState()
+
     data class Error(val message: String) : DiagnosisUiState()
 }
 
@@ -32,6 +34,13 @@ class DiagnosisViewModel(
     val uiState = _uiState.asStateFlow()
 
     fun diagnosePlant(context: Context, imageUri: Uri) {
+        if (!NetworkUtils.isInternetAvailable(context)) {
+            _uiState.value = DiagnosisUiState.Error(
+                "Sem conexão com a internet.\nVerifique seu Wi-Fi ou dados móveis e tente novamente."
+            )
+            return
+        }
+
         _uiState.value = DiagnosisUiState.Loading
 
         val startTime = System.currentTimeMillis()
